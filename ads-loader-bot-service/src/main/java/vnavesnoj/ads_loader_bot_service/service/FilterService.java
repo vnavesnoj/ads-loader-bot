@@ -23,7 +23,7 @@ public interface FilterService {
 
     FilterReadDto create(FilterCreateDto filter);
 
-    Optional<FilterReadDto> update(Long id, FilterEditDto filter);
+    Optional<FilterReadDto> patch(Long id, FilterEditDto filter);
 
     boolean delete(Long id);
 
