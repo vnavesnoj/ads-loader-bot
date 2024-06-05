@@ -1,7 +1,7 @@
 package vnavesnoj.ads_loader_bot_service.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.Value;
-import org.springframework.lang.Nullable;
 import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
 
 import java.time.Instant;
