@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:16.1'
+    environment:
+      - 'POSTGRES_DB=ads-loader-bot-bd'
+      - 'POSTGRES_PASSWORD=pass'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432:5432'
