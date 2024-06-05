@@ -31,13 +31,16 @@ CREATE TABLE users
 --changeset vnavesnoj:4
 CREATE TABLE filter
 (
-    id       BIGSERIAL PRIMARY KEY,
-    instant  TIMESTAMP    NOT NULL,
-    platform VARCHAR(7)   NOT NULL,
-    spot     VARCHAR(255) NOT NULL,
-    enabled  BOOLEAN      NOT NULL,
-    pattern  JSONB        NOT NULL,
-    user_id  BIGINT       NOT NULL REFERENCES users ON DELETE CASCADE
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(15)  NOT NULL,
+    description VARCHAR(63),
+    instant     TIMESTAMP    NOT NULL,
+    platform    VARCHAR(7)   NOT NULL,
+    spot        VARCHAR(255) NOT NULL,
+    enabled     BOOLEAN      NOT NULL,
+    pattern     JSONB        NOT NULL,
+    user_id     BIGINT       NOT NULL REFERENCES users ON DELETE CASCADE,
+    UNIQUE (name, user_id)
 );
 
 --changeset vnavesnoj:5
