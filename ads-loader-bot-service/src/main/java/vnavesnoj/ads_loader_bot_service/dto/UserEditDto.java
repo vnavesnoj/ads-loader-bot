@@ -11,5 +11,5 @@ public class UserEditDto {
 
     String languageCode;
 
-    boolean notify;
+    Boolean notify;
 }

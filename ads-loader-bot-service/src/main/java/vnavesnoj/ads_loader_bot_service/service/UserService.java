@@ -16,7 +16,7 @@ public interface UserService {
 
     UserReadDto create(UserCreateDto user);
 
-    Optional<UserReadDto> update(Long id, UserEditDto user);
+    Optional<UserReadDto> patch(Long id, UserEditDto user);
 
     boolean delete(Long id);
 }
