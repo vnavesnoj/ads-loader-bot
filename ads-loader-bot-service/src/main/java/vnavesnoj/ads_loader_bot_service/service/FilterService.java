@@ -1,6 +1,7 @@
 package vnavesnoj.ads_loader_bot_service.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import vnavesnoj.ads_loader_bot_service.dto.FilterCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.FilterEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.FilterMetaReadDto;
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 public interface FilterService {
 
-    Page<FilterMetaReadDto> findAllByUserId(Long id);
+    Page<FilterMetaReadDto> findAllByUserId(Long id, Pageable pageable);
 
     Optional<FilterReadDto> findById(Long id);
 
