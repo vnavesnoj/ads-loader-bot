@@ -13,10 +13,10 @@ CREATE TABLE ad
 );
 
 --changeset vnavesnoj:2
-CREATE TABLE ad_info
+CREATE TABLE ad_body
 (
     ad_id BIGINT PRIMARY KEY REFERENCES ad ON DELETE CASCADE,
-    info  JSONB NOT NULL
+    body  JSONB NOT NULL
 );
 
 --changeset vnavesnoj:3
@@ -32,11 +32,12 @@ CREATE TABLE users
 CREATE TABLE filter
 (
     id       BIGSERIAL PRIMARY KEY,
-    instant  TIMESTAMP  NOT NULL,
-    platform VARCHAR(7) NOT NULL,
-    enabled  BOOLEAN    NOT NULL,
-    pattern  JSONB      NOT NULL,
-    user_id  BIGINT     NOT NULL REFERENCES users
+    instant  TIMESTAMP    NOT NULL,
+    platform VARCHAR(7)   NOT NULL,
+    spot     VARCHAR(255) NOT NULL,
+    enabled  BOOLEAN      NOT NULL,
+    pattern  JSONB        NOT NULL,
+    user_id  BIGINT       NOT NULL REFERENCES users ON DELETE CASCADE
 );
 
 --changeset vnavesnoj:5
