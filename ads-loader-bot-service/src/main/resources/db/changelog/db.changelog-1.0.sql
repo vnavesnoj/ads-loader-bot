@@ -29,21 +29,30 @@ CREATE TABLE users
 );
 
 --changeset vnavesnoj:4
-CREATE TABLE filter
+CREATE TABLE spot
 (
-    id          BIGSERIAL PRIMARY KEY,
-    name        VARCHAR(15)  NOT NULL,
-    description VARCHAR(63),
-    instant     TIMESTAMP    NOT NULL,
-    platform    VARCHAR(7)   NOT NULL,
-    spot        VARCHAR(255) NOT NULL,
-    enabled     BOOLEAN      NOT NULL,
-    pattern     JSONB        NOT NULL,
-    user_id     BIGINT       NOT NULL REFERENCES users ON DELETE CASCADE,
-    UNIQUE (name, user_id)
+    id       SERIAL PRIMARY KEY,
+    platform VARCHAR(7)   NOT NULL,
+    url      VARCHAR(255) NOT NULL,
+    name     VARCHAR(255) NOT NULL,
+    analyzer VARCHAR(15)
 );
 
 --changeset vnavesnoj:5
+CREATE TABLE filter
+(
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(15) NOT NULL,
+    description VARCHAR(63),
+    instant     TIMESTAMP   NOT NULL,
+    spot_id     INT         NOT NULL REFERENCES spot,
+    enabled     BOOLEAN     NOT NULL,
+    pattern     JSONB       NOT NULL,
+    user_id     BIGINT      NOT NULL REFERENCES users ON DELETE CASCADE,
+    UNIQUE (name, user_id)
+);
+
+--changeset vnavesnoj:6
 CREATE TABLE filter_ad
 (
     id        BIGSERIAL PRIMARY KEY,

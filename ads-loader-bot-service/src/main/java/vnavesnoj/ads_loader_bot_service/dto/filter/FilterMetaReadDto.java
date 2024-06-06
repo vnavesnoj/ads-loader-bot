@@ -2,7 +2,7 @@ package vnavesnoj.ads_loader_bot_service.dto.filter;
 
 import jakarta.annotation.Nullable;
 import lombok.Value;
-import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
+import vnavesnoj.ads_loader_bot_service.dto.spot.SpotReadDto;
 
 import java.time.Instant;
 
@@ -22,9 +22,7 @@ public class FilterMetaReadDto {
 
     Instant instant;
 
-    Platform platform;
-
-    String spot;
+    SpotReadDto spotReadDto;
 
     boolean enabled;
 

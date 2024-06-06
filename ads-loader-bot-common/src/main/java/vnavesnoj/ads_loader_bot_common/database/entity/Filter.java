@@ -33,12 +33,8 @@ public class Filter {
     @Column(nullable = false, columnDefinition = "timestamp")
     Instant instant;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Platform platform;
-
-    @Column(nullable = false, length = 255)
-    String spot;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    Spot spot;
 
     @Column(nullable = false)
     boolean enabled;
