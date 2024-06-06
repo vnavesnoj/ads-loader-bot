@@ -3,6 +3,7 @@ package vnavesnoj.ads_loader_bot_common.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.Instant;
 
@@ -12,6 +13,7 @@ import java.time.Instant;
  */
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = "user")
