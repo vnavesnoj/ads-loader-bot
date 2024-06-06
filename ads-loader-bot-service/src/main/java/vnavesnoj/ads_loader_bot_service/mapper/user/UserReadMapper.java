@@ -1,8 +1,9 @@
-package vnavesnoj.ads_loader_bot_service.mapper;
+package vnavesnoj.ads_loader_bot_service.mapper.user;
 
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.database.entity.User;
-import vnavesnoj.ads_loader_bot_service.dto.UserReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
+import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 /**
  * @author vnavesnoj

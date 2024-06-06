@@ -1,6 +1,8 @@
-package vnavesnoj.ads_loader_bot_service.dto;
+package vnavesnoj.ads_loader_bot_service.dto.filterad;
 
 import lombok.Value;
+import vnavesnoj.ads_loader_bot_service.dto.ad.AdReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.filter.FilterMetaReadDto;
 
 /**
  * @author vnavesnoj

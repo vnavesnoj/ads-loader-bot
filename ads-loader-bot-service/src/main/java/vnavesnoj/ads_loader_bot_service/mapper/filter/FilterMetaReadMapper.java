@@ -1,8 +1,9 @@
-package vnavesnoj.ads_loader_bot_service.mapper;
+package vnavesnoj.ads_loader_bot_service.mapper.filter;
 
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
-import vnavesnoj.ads_loader_bot_service.dto.FilterMetaReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.filter.FilterMetaReadDto;
+import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 /**
  * @author vnavesnoj

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vnavesnoj.ads_loader_bot_common.database.entity.FilterAd;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterAdRepository;
-import vnavesnoj.ads_loader_bot_service.dto.FilterAdReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterad.FilterAdReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterAdService;
 

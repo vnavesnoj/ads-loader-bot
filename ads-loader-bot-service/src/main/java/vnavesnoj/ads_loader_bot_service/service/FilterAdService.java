@@ -2,7 +2,7 @@ package vnavesnoj.ads_loader_bot_service.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import vnavesnoj.ads_loader_bot_service.dto.FilterAdReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterad.FilterAdReadDto;
 
 /**
  * @author vnavesnoj

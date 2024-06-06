@@ -1,8 +1,8 @@
 package vnavesnoj.ads_loader_bot_service.service;
 
-import vnavesnoj.ads_loader_bot_service.dto.UserCreateDto;
-import vnavesnoj.ads_loader_bot_service.dto.UserEditDto;
-import vnavesnoj.ads_loader_bot_service.dto.UserReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserEditDto;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
 
 import java.util.Optional;
 

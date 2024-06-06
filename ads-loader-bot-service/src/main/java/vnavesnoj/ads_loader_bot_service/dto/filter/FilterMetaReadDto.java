@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.dto;
+package vnavesnoj.ads_loader_bot_service.dto.filter;
 
 import jakarta.annotation.Nullable;
 import lombok.Value;

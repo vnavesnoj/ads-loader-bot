@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.dto;
+package vnavesnoj.ads_loader_bot_service.dto.user;
 
 import lombok.NonNull;
 import lombok.Value;

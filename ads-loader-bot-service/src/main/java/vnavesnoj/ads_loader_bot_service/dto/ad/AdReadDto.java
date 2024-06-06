@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.dto;
+package vnavesnoj.ads_loader_bot_service.dto.ad;
 
 import lombok.Value;
 import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
