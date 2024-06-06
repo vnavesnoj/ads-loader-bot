@@ -2,6 +2,7 @@ package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_service.service.component.AdsJsonParser;
@@ -26,12 +27,16 @@ public class OlxDefaultDownloader implements SpotDownloader<OlxDefaultAdBody> {
     private final AdsJsonScanner<OlxDefaultAdsJson> olxDefaultAdsJsonScanner;
     private final AdsJsonParser<OlxDefaultAdBody, OlxDefaultAdsJson> olxDefaultAdsJsonParser;
 
-    //TODO add url postfix
+    @Value("${app.remote-resource.olx.connection.url:https://www.olx.ua/uk/}")
+    private String URL_PREFIX;
+    @Value("${app.remote-resource.olx.connection.url-postfix:?search%5Border%5D=created_at%3Adesc}")
+    private String URL_POSTFIX;
+
     @Override
     public List<OlxDefaultAdBody> download(@NonNull Spot spot) {
         return Optional.of(spot)
                 .map(Spot::getUrl)
-                .map(url -> jsoupConnector.getHtml("https://" + spot.getUrl()))
+                .map(url -> jsoupConnector.getHtml(URL_PREFIX + spot.getUrl() + URL_POSTFIX))
                 .map(olxDefaultAdsJsonScanner::findAds)
                 .map(olxDefaultAdsJsonParser::parse)
                 .orElseThrow();
