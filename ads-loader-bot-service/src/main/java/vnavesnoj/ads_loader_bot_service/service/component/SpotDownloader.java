@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface SpotDownloader<A> {
 
-    List<A> download(Spot spot);
+    List<A> downloadAds(Spot spot);
 }

@@ -26,7 +26,7 @@ public class FilterAd {
     @Column(nullable = false, columnDefinition = "timestamp")
     Instant instant;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ad_url", referencedColumnName = "url", nullable = false)
     Ad ad;
 

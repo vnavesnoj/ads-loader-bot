@@ -21,7 +21,7 @@ public class OlxDefaultDownloaderTest {
     @Test
     void test() {
         final var spot = new Spot(1, Platform.OLX, "transport/legkovye-avtomobili/", "Авто", Analyzer.OLX_DEFAULT);
-        final var downloaded = olxDefaultDownloader.download(spot);
+        final var downloaded = olxDefaultDownloader.downloadAds(spot);
         System.out.println();
     }
 }

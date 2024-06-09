@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author vnavesnoj
@@ -28,11 +28,11 @@ public class OlxDefaultAdBody {
     String url;
 
     @NonNull
-    LocalDateTime createdTime;
+    ZonedDateTime createdTime;
 
-    LocalDateTime pushupTime;
+    ZonedDateTime pushupTime;
 
-    LocalDateTime lastRefreshTime;
+    ZonedDateTime lastRefreshTime;
 
     Boolean negotiable;
 

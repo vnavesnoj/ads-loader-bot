@@ -8,7 +8,7 @@ import vnavesnoj.ads_loader_bot_service.service.component.AdsJsonParser;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdsJson;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +56,16 @@ public class OlxDefaultAdsJsonParser implements AdsJsonParser<OlxDefaultAdBody, 
                     .title(jsonObject.getAsJsonPrimitive("title").getAsString())
                     .description(jsonObject.getAsJsonPrimitive("description").getAsString())
                     .url(jsonObject.getAsJsonPrimitive("url").getAsString())
-                    .createdTime(LocalDateTime.parse(
+                    .createdTime(ZonedDateTime.parse(
                             jsonObject.getAsJsonPrimitive("createdTime").getAsString(),
                             DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                     .pushupTime(Optional.ofNullable(jsonObject.getAsJsonPrimitive("pushupTime"))
                             .map(JsonPrimitive::getAsString)
-                            .map(value -> LocalDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                            .map(value -> ZonedDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                             .orElse(null))
                     .lastRefreshTime(Optional.ofNullable(jsonObject.getAsJsonPrimitive("lastRefreshTime"))
                             .map(JsonPrimitive::getAsString)
-                            .map(value -> LocalDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                            .map(value -> ZonedDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                             .orElse(null));
 
             if (jsonPrice != null) {

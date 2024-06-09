@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vnavesnoj.ads_loader_bot_common.database.entity.FilterAd;
 
+import java.util.Optional;
+
 /**
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
@@ -35,4 +37,8 @@ public interface FilterAdRepository extends JpaRepository<FilterAd, Long> {
             u.id = :userId
             """)
     Page<FilterAd> findAllByFilterNameAndUserId(String name, Long userId, Pageable pageable);
+
+    boolean existsByFilterIdAndAdId(Long filterId, Long adId);
+
+    Optional<FilterAd> findByFilterIdAndAdId(Long filterId, Long adId);
 }

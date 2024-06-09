@@ -1,10 +1,12 @@
 package vnavesnoj.ads_loader_bot_service.service.component;
 
+import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
+
 /**
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
  */
-public interface AdMatcher<A, F> {
+public interface AdMatcher<A> {
 
-    boolean match(A ad, F filter);
+    boolean match(A ad, Filter filter);
 }

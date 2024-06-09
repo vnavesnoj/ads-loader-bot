@@ -3,6 +3,7 @@ package vnavesnoj.ads_loader_bot_common.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnTransformer;
 
 /**
  * @author vnavesnoj
@@ -22,6 +23,7 @@ public class AdBody {
     Long adId;
 
     @Column(name = "body", nullable = false, columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     String jsonBody;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

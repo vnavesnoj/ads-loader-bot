@@ -33,7 +33,7 @@ public class OlxDefaultDownloader implements SpotDownloader<OlxDefaultAdBody> {
     private String URL_POSTFIX;
 
     @Override
-    public List<OlxDefaultAdBody> download(@NonNull Spot spot) {
+    public List<OlxDefaultAdBody> downloadAds(@NonNull Spot spot) {
         return Optional.of(spot)
                 .map(Spot::getUrl)
                 .map(url -> jsoupConnector.getHtml(URL_PREFIX + spot.getUrl() + URL_POSTFIX))

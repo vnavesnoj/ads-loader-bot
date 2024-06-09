@@ -22,7 +22,6 @@ import java.time.Instant;
 public class Ad {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Enumerated(EnumType.STRING)
@@ -31,7 +30,7 @@ public class Ad {
     @Column(unique = true, nullable = false, length = 255)
     String url;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     String title;
 
     @Column(columnDefinition = "timestamp")
@@ -43,6 +42,6 @@ public class Ad {
     @Column(nullable = false)
     int hash;
 
-    @OneToOne(mappedBy = "ad", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "ad", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     AdBody adBody;
 }
