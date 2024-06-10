@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.Instant;
 
@@ -42,6 +43,7 @@ public class Filter {
     boolean enabled;
 
     @Column(name = "pattern", nullable = false, columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     String jsonPattern;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
