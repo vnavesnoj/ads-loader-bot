@@ -54,7 +54,7 @@ public class OlxDefaultAdsJsonParser implements AdsJsonParser<OlxDefaultAdBody, 
             final var productBuilder = OlxDefaultAdBody.builder()
                     .id(jsonObject.getAsJsonPrimitive("id").getAsLong())
                     .title(jsonObject.getAsJsonPrimitive("title").getAsString())
-                    .description(jsonObject.getAsJsonPrimitive("description").getAsString())
+                    .description(jsonObject.getAsJsonPrimitive("description").getAsString().replace("<br />", ""))
                     .url(jsonObject.getAsJsonPrimitive("url").getAsString())
                     .createdTime(ZonedDateTime.parse(
                             jsonObject.getAsJsonPrimitive("createdTime").getAsString(),
