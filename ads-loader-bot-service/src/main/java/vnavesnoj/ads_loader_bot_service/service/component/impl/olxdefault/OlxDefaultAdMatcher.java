@@ -27,27 +27,53 @@ public class OlxDefaultAdMatcher implements AdMatcher<OlxDefaultAdBody> {
             return false;
         }
         final var pattern = filterPatternMapper.map(filter);
+        return checkDescriptionPatterns(adObject, pattern)
+                && checkPriceType(adObject, pattern)
+                && checkCurrencyCode(adObject, pattern)
+                && checkRegularPrice(adObject, pattern)
+                && checkCityNames(adObject, pattern)
+                && checkRegionNames(adObject, pattern);
+    }
+
+    private static boolean checkRegionNames(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        return pattern.getRegionNames() == null ||
+                pattern.getRegionNames().length == 0 ||
+                containsAnyIgnoreCase(adObject.getRegionName(), pattern.getRegionNames());
+    }
+
+    private static boolean checkCityNames(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        return pattern.getCityNames() == null ||
+                pattern.getCityNames().length == 0 ||
+                containsAnyIgnoreCase(adObject.getCityName(), pattern.getCityNames());
+    }
+
+    private static boolean checkRegularPrice(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        long regularPrice = adObject.getRegularPrice() == null ? 0 : adObject.getRegularPrice();
         long minPrice = pattern.getMinPrice() == null ? -1 : pattern.getMinPrice();
         long maxPrice = pattern.getMaxPrice() == null ? -1 : pattern.getMaxPrice();
-        long regularPrice = adObject.getRegularPrice() == null ? 0 : adObject.getRegularPrice();
-        final var priceTypeMatch = pattern.getPriceType() == null
+        return (minPrice == -1 || minPrice <= regularPrice)
+                && (maxPrice == -1 || regularPrice <= maxPrice);
+    }
+
+    private static boolean checkCurrencyCode(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        return pattern.getCurrencyCode() == null ||
+                equalsIgnoreCase(adObject.getCurrencyCode(), pattern.getCurrencyCode().name());
+    }
+
+    private static boolean checkPriceType(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        return pattern.getPriceType() == null
                 || switch (pattern.getPriceType()) {
             case FREE -> adObject.getFree();
             case EXCHANGE -> adObject.getExchange();
             default -> true;
         };
-        return (containsAnyIgnoreCase(adObject.getTitle(), pattern.getDescriptionPatterns()) ||
-                containsAnyIgnoreCase(adObject.getDescription(), pattern.getDescriptionPatterns()))
-                && priceTypeMatch
-                && (pattern.getCurrencyCode() == null ||
-                equalsIgnoreCase(adObject.getCurrencyCode(), pattern.getCurrencyCode().name()))
-                && (minPrice == -1 || minPrice <= regularPrice)
-                && (maxPrice == -1 || regularPrice <= maxPrice)
-                && (pattern.getCityNames() == null ||
-                pattern.getCityNames().length == 0 ||
-                containsAnyIgnoreCase(adObject.getCityName(), pattern.getCityNames()))
-                && (pattern.getRegionNames() == null ||
-                pattern.getRegionNames().length == 0 ||
-                containsAnyIgnoreCase(adObject.getRegionName(), pattern.getRegionNames()));
+    }
+
+    private static boolean checkDescriptionPatterns(OlxDefaultAdBody adObject, OlxDefaultPattern pattern) {
+        if (pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0) {
+            return true;
+        }
+        return containsAnyIgnoreCase(adObject.getTitle(), pattern.getDescriptionPatterns()) ||
+                containsAnyIgnoreCase(adObject.getDescription(), pattern.getDescriptionPatterns());
     }
 }

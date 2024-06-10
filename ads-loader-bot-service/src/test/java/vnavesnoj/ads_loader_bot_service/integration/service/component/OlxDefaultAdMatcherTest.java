@@ -117,6 +117,49 @@ public class OlxDefaultAdMatcherTest {
             "descriptionPatterns": ["xyz"]
             }""";
 
+    private final String pattern10 = """
+            {"priceType": "ALL",
+            "minPrice": 0,
+            "maxPrice": 1000,
+            "currencyCode": "UAH",
+            "cityNames": ["city"],
+            "regionNames": ["region"]
+            }""";
+
+    private final String pattern11 = """
+            {"minPrice": 0,
+            "maxPrice": 1000,
+            "currencyCode": "UAH",
+            "cityNames": ["city"],
+            "regionNames": ["region"]
+            }""";
+
+    private final String pattern12 = """
+            {"maxPrice": 1000,
+            "currencyCode": "UAH",
+            "cityNames": ["city"],
+            "regionNames": ["region"]
+            }""";
+
+    private final String pattern13 = """
+            {"currencyCode": "UAH",
+            "cityNames": ["city"],
+            "regionNames": ["region"]
+            }""";
+
+    private final String pattern14 = """
+            {"cityNames": ["city"],
+            "regionNames": ["region"]
+            }""";
+
+    private final String pattern15 = """
+            {"regionNames": ["region"]
+            }""";
+
+    private final String pattern16 = """
+            {"regionNames": ["xyz"]
+            }""";
+
     private final User user1 = new User(
             1L,
             "dummy code",
@@ -166,6 +209,28 @@ public class OlxDefaultAdMatcherTest {
 
         filter1.setJsonPattern(pattern1);
         filter1.setEnabled(false);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isFalse();
+
+        filter1.setEnabled(true);
+        filter1.setJsonPattern(pattern10);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern11);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern12);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern13);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern14);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern15);
+        assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isTrue();
+
+        filter1.setJsonPattern(pattern16);
         assertThat(olxDefaultAdMatcher.match(adBody1, filter1)).isFalse();
     }
 }
