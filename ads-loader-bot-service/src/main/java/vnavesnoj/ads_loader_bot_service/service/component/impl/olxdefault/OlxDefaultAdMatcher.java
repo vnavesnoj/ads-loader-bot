@@ -8,7 +8,8 @@ import vnavesnoj.ads_loader_bot_service.service.component.AdMatcher;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultPattern;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.containsAnyIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * @author vnavesnoj
@@ -22,28 +23,31 @@ public class OlxDefaultAdMatcher implements AdMatcher<OlxDefaultAdBody> {
 
     @Override
     public boolean match(OlxDefaultAdBody adObject, Filter filter) {
-        final var ad = (OlxDefaultAdBody) adObject;
+        if (!filter.isEnabled()) {
+            return false;
+        }
         final var pattern = filterPatternMapper.map(filter);
         long minPrice = pattern.getMinPrice() == null ? -1 : pattern.getMinPrice();
         long maxPrice = pattern.getMaxPrice() == null ? -1 : pattern.getMaxPrice();
-        long regularPrice = ad.getRegularPrice() == null ? 0 : ad.getRegularPrice();
-        final var priceTypeMatch = switch (pattern.getPriceType()) {
-            case FREE -> ad.getFree();
-            case EXCHANGE -> ad.getExchange();
+        long regularPrice = adObject.getRegularPrice() == null ? 0 : adObject.getRegularPrice();
+        final var priceTypeMatch = pattern.getPriceType() == null
+                || switch (pattern.getPriceType()) {
+            case FREE -> adObject.getFree();
+            case EXCHANGE -> adObject.getExchange();
             default -> true;
         };
-        return (containsAnyIgnoreCase(ad.getTitle(), pattern.getDescriptionPatterns()) ||
-                containsAnyIgnoreCase(ad.getDescription(), pattern.getDescriptionPatterns()))
+        return (containsAnyIgnoreCase(adObject.getTitle(), pattern.getDescriptionPatterns()) ||
+                containsAnyIgnoreCase(adObject.getDescription(), pattern.getDescriptionPatterns()))
                 && priceTypeMatch
                 && (pattern.getCurrencyCode() == null ||
-                equalsIgnoreCase(ad.getCurrencyCode(), pattern.getCurrencyCode().name()))
+                equalsIgnoreCase(adObject.getCurrencyCode(), pattern.getCurrencyCode().name()))
                 && (minPrice == -1 || minPrice <= regularPrice)
                 && (maxPrice == -1 || regularPrice <= maxPrice)
                 && (pattern.getCityNames() == null ||
                 pattern.getCityNames().length == 0 ||
-                equalsAnyIgnoreCase(ad.getCityName(), pattern.getCityNames()))
+                containsAnyIgnoreCase(adObject.getCityName(), pattern.getCityNames()))
                 && (pattern.getRegionNames() == null ||
                 pattern.getRegionNames().length == 0 ||
-                equalsAnyIgnoreCase(ad.getRegionName(), pattern.getRegionNames()));
+                containsAnyIgnoreCase(adObject.getRegionName(), pattern.getRegionNames()));
     }
 }

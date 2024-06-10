@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.service.component.impl;
+package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
