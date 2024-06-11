@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.database.entity.*;
+import vnavesnoj.ads_loader_bot_service.annotation.IT;
+import vnavesnoj.ads_loader_bot_service.config.TestContainersConfig;
 import vnavesnoj.ads_loader_bot_service.database.repository.*;
-import vnavesnoj.ads_loader_bot_service.integration.annotation.IT;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 
 import java.time.Instant;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.when;
  * @mail vnavesnoj@gmail.com
  */
 @RequiredArgsConstructor
+@Import(TestContainersConfig.class)
 @IT
 public class AdLoadJobTest {
 
@@ -102,6 +105,7 @@ public class AdLoadJobTest {
         spot1 = spotRepository.save(spot1);
         user1 = userRepository.save(user1);
         filter1 = filterRepository.save(filter1);
+        adLoadJob.resetCycle();
     }
 
     @Test

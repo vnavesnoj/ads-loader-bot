@@ -12,4 +12,6 @@ public interface AdLoadJob {
     void stop();
 
     void start();
+
+    void resetCycle();
 }

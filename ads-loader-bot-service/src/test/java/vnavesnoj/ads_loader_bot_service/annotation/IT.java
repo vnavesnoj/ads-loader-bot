@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.integration.annotation;
+package vnavesnoj.ads_loader_bot_service.annotation;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
