@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_service.service;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.database.entity.*;
 import vnavesnoj.ads_loader_bot_service.annotation.IT;
@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author vnavesnoj
@@ -33,7 +33,7 @@ public class AdLoadJobTest {
     private final FilterAdRepository filterAdRepository;
     private final AdRepository adRepository;
 
-    @MockBean
+    @SpyBean
     private AdAnalyzer analyzer;
 
     private final Instant nowInstant = Instant.now();
@@ -110,7 +110,8 @@ public class AdLoadJobTest {
 
     @Test
     void faNotExistsAdNotExists() {
-        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
+        doReturn(List.of(filterAd1)).when(analyzer).findNewFilterAd(spot1, java.util.List.of(filter1));
+//        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
         adLoadJob.loadNewFilterAds();
         assertThat(filterAdRepository.count()).isEqualTo(1L);
         assertThat(adRepository.count()).isEqualTo(1L);
@@ -123,7 +124,8 @@ public class AdLoadJobTest {
     @Test
     void faNotExistsAdExists() {
         adRepository.save(ad1);
-        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
+        doReturn(List.of(filterAd1)).when(analyzer).findNewFilterAd(spot1, java.util.List.of(filter1));
+//        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
         adLoadJob.loadNewFilterAds();
         assertThat(filterAdRepository.count()).isEqualTo(1L);
         assertThat(adRepository.count()).isEqualTo(1L);
@@ -138,7 +140,8 @@ public class AdLoadJobTest {
         adRepository.saveAndFlush(ad1);
         filterAd1.getAd().getAdBody().setJsonBody("{\"new_dummy\": \"new_dummy\"}");
         filterAd1.getAd().setHash(2);
-        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
+        doReturn(List.of(filterAd1)).when(analyzer).findNewFilterAd(spot1, java.util.List.of(filter1));
+//        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
         adLoadJob.loadNewFilterAds();
         assertThat(filterAdRepository.count()).isEqualTo(1L);
         assertThat(adRepository.count()).isEqualTo(1L);
@@ -154,7 +157,8 @@ public class AdLoadJobTest {
     void faExistsWithNewAd() {
         ad1 = adRepository.saveAndFlush(ad1);
         filterAd1 = filterAdRepository.saveAndFlush(filterAd1);
-        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
+        doReturn(List.of(filterAd1)).when(analyzer).findNewFilterAd(spot1, java.util.List.of(filter1));
+//        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
 
         assertThat(filterAdRepository.count()).isEqualTo(1L);
         assertThat(adRepository.count()).isEqualTo(1L);
@@ -182,7 +186,8 @@ public class AdLoadJobTest {
 
         filterAd1.getAd().getAdBody().setJsonBody("{\"new_dummy\": \"new_dummy\"}");
         filterAd1.getAd().setHash(2);
-        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
+        doReturn(List.of(filterAd1)).when(analyzer).findNewFilterAd(spot1, java.util.List.of(filter1));
+//        when(analyzer.findNewFilterAd(spot1, java.util.List.of(filter1))).thenReturn(List.of(filterAd1));
 
         adLoadJob.loadNewFilterAds();
 

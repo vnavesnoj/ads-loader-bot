@@ -10,7 +10,7 @@ import java.util.List;
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
  */
-public interface AdAnalyzer {
+public interface AdAnalyzer extends Analyzer {
 
     List<FilterAd> findNewFilterAd(Spot spot, List<Filter> filters);
 }

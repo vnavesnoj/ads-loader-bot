@@ -9,10 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vnavesnoj.ads_loader_bot_common.database.entity.*;
+import vnavesnoj.ads_loader_bot_common.database.entity.Ad;
+import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
+import vnavesnoj.ads_loader_bot_common.database.entity.FilterAd;
+import vnavesnoj.ads_loader_bot_common.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_service.database.repository.AdRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterAdRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterRepository;
+import vnavesnoj.ads_loader_bot_service.factory.AnalyzerFactory;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.AdLoadJob;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
@@ -32,7 +36,7 @@ public class AdLoadJobImpl implements AdLoadJob {
     private final FilterRepository filterRepository;
     private final FilterAdRepository filterAdRepository;
     private final AdRepository adRepository;
-    private final AdAnalyzer olxDefaultAnalyzer;
+    private final AnalyzerFactory analyzerFactory;
 
     private final Mapper<Ad, Ad> adCopyMapper;
 
@@ -58,23 +62,12 @@ public class AdLoadJobImpl implements AdLoadJob {
         final var groupedFilters = filters.stream()
                 .collect(Collectors.groupingBy(Filter::getSpot));
         for (Spot spot : groupedFilters.keySet()) {
-            AdAnalyzer analyzer = getAnalyzer(spot);
+            AdAnalyzer analyzer = analyzerFactory.getAdAnalyzer(spot.getPlatform());
             final var newFilterAds = analyzer.findNewFilterAd(spot, groupedFilters.get(spot));
             for (FilterAd newFilterAd : newFilterAds) {
                 saveOrUpdate(newFilterAd);
             }
         }
-    }
-
-    //TODO вынести метод в отдельный AnalyzerFactory
-    private AdAnalyzer getAnalyzer(Spot spot) {
-        AdAnalyzer analyzer;
-        if (spot.getAnalyzer().equals(Analyzer.OLX_DEFAULT)) {
-            analyzer = olxDefaultAnalyzer;
-        } else {
-            throw new RuntimeException();
-        }
-        return analyzer;
     }
 
     private void saveOrUpdate(FilterAd newFilterAd) {

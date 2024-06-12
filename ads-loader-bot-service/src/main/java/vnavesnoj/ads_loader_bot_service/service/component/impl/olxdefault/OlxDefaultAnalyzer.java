@@ -2,10 +2,7 @@ package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import vnavesnoj.ads_loader_bot_common.database.entity.Ad;
-import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
-import vnavesnoj.ads_loader_bot_common.database.entity.FilterAd;
-import vnavesnoj.ads_loader_bot_common.database.entity.Spot;
+import vnavesnoj.ads_loader_bot_common.database.entity.*;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 import vnavesnoj.ads_loader_bot_service.service.component.AdMatcher;
@@ -28,6 +25,8 @@ public class OlxDefaultAnalyzer implements AdAnalyzer {
     private final AdMatcher<OlxDefaultAdBody> olxDefaultAdMatcher;
     private final Mapper<OlxDefaultAdBody, Ad> olxDefaultAdMapper;
 
+    private final Platform platform = Platform.OLX;
+
     public List<FilterAd> findNewFilterAd(Spot spot, List<Filter> filters) {
         final var ads = olxDefaultDownloader.downloadAds(spot);
         final List<FilterAd> filterAds = new ArrayList<>();
@@ -43,5 +42,10 @@ public class OlxDefaultAnalyzer implements AdAnalyzer {
             }
         }
         return filterAds;
+    }
+
+    @Override
+    public Platform getAnalysisPlatform() {
+        return this.platform;
     }
 }
