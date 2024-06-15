@@ -8,6 +8,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
  * @mail vnavesnoj@gmail.com
  */
 @SpringBootApplication
-@EntityScan("vnavesnoj/ads_loader_bot_common/database/entity")
+@EntityScan("vnavesnoj/ads_loader_bot_persistence/database/entity")
 public class TestContextConfiguration {
 }

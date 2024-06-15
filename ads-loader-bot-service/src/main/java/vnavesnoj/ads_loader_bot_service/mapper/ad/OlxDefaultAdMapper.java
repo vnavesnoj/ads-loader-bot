@@ -3,9 +3,9 @@ package vnavesnoj.ads_loader_bot_service.mapper.ad;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-import vnavesnoj.ads_loader_bot_common.database.entity.Ad;
-import vnavesnoj.ads_loader_bot_common.database.entity.AdBody;
-import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Ad;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.AdBody;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Platform;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 

@@ -1,8 +1,8 @@
 package vnavesnoj.ads_loader_bot_service.service.component;
 
-import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
-import vnavesnoj.ads_loader_bot_common.database.entity.FilterAd;
-import vnavesnoj.ads_loader_bot_common.database.entity.Spot;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterAd;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 
 import java.util.List;
 

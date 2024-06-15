@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import vnavesnoj.ads_loader_bot_common.database.entity.*;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.*;
 import vnavesnoj.ads_loader_bot_service.annotation.IT;
 import vnavesnoj.ads_loader_bot_service.config.TestContainersConfig;
 import vnavesnoj.ads_loader_bot_service.database.repository.*;

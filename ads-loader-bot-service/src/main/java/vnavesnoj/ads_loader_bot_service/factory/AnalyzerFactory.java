@@ -1,6 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.factory;
 
-import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Platform;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 
 import java.util.List;

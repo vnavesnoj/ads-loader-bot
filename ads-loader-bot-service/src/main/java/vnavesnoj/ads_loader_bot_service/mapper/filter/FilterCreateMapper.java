@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_service.mapper.filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterCreateDto;

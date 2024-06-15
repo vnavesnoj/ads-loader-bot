@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_service.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import vnavesnoj.ads_loader_bot_common.database.entity.User;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.User;
 import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserEditDto;

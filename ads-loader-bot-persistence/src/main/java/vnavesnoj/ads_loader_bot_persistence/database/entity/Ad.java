@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_common.database.entity;
+package vnavesnoj.ads_loader_bot_persistence.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

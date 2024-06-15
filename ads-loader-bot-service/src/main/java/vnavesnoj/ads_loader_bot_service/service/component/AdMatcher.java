@@ -1,6 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.service.component;
 
-import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 
 /**
  * @author vnavesnoj

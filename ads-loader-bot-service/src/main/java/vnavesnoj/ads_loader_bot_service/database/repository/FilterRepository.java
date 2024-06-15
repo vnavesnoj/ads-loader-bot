@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import vnavesnoj.ads_loader_bot_common.database.entity.Filter;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 
 import java.util.Optional;
 
