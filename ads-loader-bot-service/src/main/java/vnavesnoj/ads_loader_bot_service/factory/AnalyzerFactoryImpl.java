@@ -1,5 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.factory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.database.entity.Platform;
 import vnavesnoj.ads_loader_bot_service.exception.AnalyzerInitializationException;
@@ -20,7 +21,7 @@ public class AnalyzerFactoryImpl implements AnalyzerFactory {
     private final Map<Platform, AdAnalyzer> adAnalyzers;
 
     //TODO need tests in future
-    public AnalyzerFactoryImpl(List<AdAnalyzer> adAnalyzers) {
+    public AnalyzerFactoryImpl(@Autowired List<AdAnalyzer> adAnalyzers) {
         final var duplicateImplementations = getDuplicateImplementations(adAnalyzers);
         final var notImplementedPlatforms = Arrays.stream(Platform.values())
                 .filter(platform -> adAnalyzers.stream()

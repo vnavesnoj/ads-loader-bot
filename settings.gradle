@@ -2,4 +2,4 @@ rootProject.name = 'ads-loader-bot'
 
 include 'ads-loader-bot-common'
 include 'ads-loader-bot-service'
-include 'ads-loader-bot-controller'
+include 'ads-loader-bot-configuration'

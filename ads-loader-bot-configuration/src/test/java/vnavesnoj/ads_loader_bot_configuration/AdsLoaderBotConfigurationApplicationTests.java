@@ -1,10 +1,10 @@
-package vnavesnoj.ads_loader_bot_controller;
+package vnavesnoj.ads_loader_bot_configuration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AdsLoaderBotControllerApplicationTests {
+class AdsLoaderBotConfigurationApplicationTests {
 
     @Test
     void contextLoads() {

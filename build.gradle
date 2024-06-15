@@ -1,0 +1,30 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.5'
+    id 'io.freefair.lombok' version '8.6'
+}
+
+subprojects {
+
+    group = 'vnavesnoj'
+    version = '0.0.1-SNAPSHOT'
+
+    apply {
+        plugin 'java'
+        plugin 'io.spring.dependency-management'
+        plugin 'io.freefair.lombok'
+    }
+
+    java {
+        sourceCompatibility = '17'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:3.3.0")
+        }
+    }
+}

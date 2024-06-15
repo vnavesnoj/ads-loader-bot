@@ -2,8 +2,10 @@ package vnavesnoj.ads_loader_bot_service.integration.service.component;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.database.entity.*;
 import vnavesnoj.ads_loader_bot_service.annotation.IT;
+import vnavesnoj.ads_loader_bot_service.config.TestContainersConfig;
 import vnavesnoj.ads_loader_bot_service.service.component.AdMatcher;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 
@@ -17,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @mail vnavesnoj@gmail.com
  */
 @RequiredArgsConstructor
+@Import(TestContainersConfig.class)
 @IT
 public class OlxDefaultAdMatcherTest {
 
