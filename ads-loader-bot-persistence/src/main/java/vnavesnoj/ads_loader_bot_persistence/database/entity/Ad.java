@@ -3,6 +3,7 @@ package vnavesnoj.ads_loader_bot_persistence.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vnavesnoj.ads_loader_bot_common.constant.Platform;
 
 import java.time.Instant;
 

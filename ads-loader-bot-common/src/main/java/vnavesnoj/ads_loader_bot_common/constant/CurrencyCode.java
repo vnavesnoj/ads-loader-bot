@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo;
+package vnavesnoj.ads_loader_bot_common.constant;
 
 /**
  * @author vnavesnoj

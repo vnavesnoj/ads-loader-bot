@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import vnavesnoj.ads_loader_bot_common.constant.CurrencyCode;
+import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 
 /**
  * @author vnavesnoj

@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':ads-loader-bot-common')
     implementation project(path: ':ads-loader-bot-persistence')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.liquibase:liquibase-core'

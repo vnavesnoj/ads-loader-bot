@@ -2,7 +2,7 @@ package vnavesnoj.ads_loader_bot_service.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vnavesnoj.ads_loader_bot_persistence.database.entity.Platform;
+import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_service.exception.AnalyzerInitializationException;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 
