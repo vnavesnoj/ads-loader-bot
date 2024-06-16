@@ -2,16 +2,11 @@ plugins {
 	id 'org.springframework.boot' version '3.3.0'
 }
 
-group = 'vnavesnoj'
-version = '0.0.1-SNAPSHOT'
-
-repositories {
-	mavenCentral()
-}
-
 dependencies {
 	implementation project(':ads-loader-bot-common')
+	implementation project(':ads-loader-bot-persistence')
 	implementation project(':ads-loader-bot-service')
+	implementation project(':ads-loader-bot-web')
 	implementation 'org.springframework.boot:spring-boot-starter'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'

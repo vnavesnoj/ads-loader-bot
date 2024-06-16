@@ -41,3 +41,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/ads-loader-bot-configuration/src/main/resources/telegram-security.yaml

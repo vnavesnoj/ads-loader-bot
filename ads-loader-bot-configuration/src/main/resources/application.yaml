@@ -1,4 +1,5 @@
 spring:
+
   application:
     name: ads-loader-bot-configuration
   datasource:
@@ -25,6 +26,9 @@ spring:
   session:
     jdbc:
       initialize-schema: always
+
+  config:
+    import: telegram-security.yaml
 
 app:
   ad-load-job:
