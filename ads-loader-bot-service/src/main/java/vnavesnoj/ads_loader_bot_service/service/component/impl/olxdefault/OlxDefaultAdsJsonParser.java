@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_service.service.component.AdsJsonParser;
-import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdsJson;
 
 import java.time.ZonedDateTime;

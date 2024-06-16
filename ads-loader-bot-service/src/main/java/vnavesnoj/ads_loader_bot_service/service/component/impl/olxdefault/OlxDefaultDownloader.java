@@ -4,12 +4,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_service.service.component.AdsJsonParser;
 import vnavesnoj.ads_loader_bot_service.service.component.AdsJsonScanner;
 import vnavesnoj.ads_loader_bot_service.service.component.Connector;
 import vnavesnoj.ads_loader_bot_service.service.component.SpotDownloader;
-import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdsJson;
 
 import java.util.List;

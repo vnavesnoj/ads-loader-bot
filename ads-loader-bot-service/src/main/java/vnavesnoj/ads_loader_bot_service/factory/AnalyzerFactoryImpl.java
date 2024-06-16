@@ -36,7 +36,7 @@ public class AnalyzerFactoryImpl implements AnalyzerFactory {
             final var duplications = duplicateImplementations.stream()
                     .map(item -> item.getClass().getName() + "(" + item.getAnalysisPlatform() + ")")
                     .collect(Collectors.joining(",", "[", "]"));
-            throw new AnalyzerInitializationException("there are duplicated implementations : " + duplications);
+            throw new AnalyzerInitializationException("there are duplicated implementations: " + duplications);
         }
     }
 

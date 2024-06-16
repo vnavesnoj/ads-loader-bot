@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.User;
 import vnavesnoj.ads_loader_bot_service.annotation.IT;
 import vnavesnoj.ads_loader_bot_service.config.TestContainersConfig;
 import vnavesnoj.ads_loader_bot_service.service.component.AdMatcher;
-import vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault.pojo.OlxDefaultAdBody;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
