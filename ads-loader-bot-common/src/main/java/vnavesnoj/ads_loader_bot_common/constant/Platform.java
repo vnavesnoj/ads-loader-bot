@@ -13,7 +13,9 @@ import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 @Getter
 public enum Platform {
 
-    OLX(OlxDefaultPattern.class, OlxDefaultAdBody.class);
+    OLX("olx.ua", OlxDefaultPattern.class, OlxDefaultAdBody.class);
+
+    private final String domain;
 
     private final Class<?> patternClass;
 

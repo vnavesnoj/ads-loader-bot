@@ -15,7 +15,7 @@ subprojects {
     }
 
     java {
-        sourceCompatibility = '17'
+        sourceCompatibility = '20'
     }
 
     repositories {
