@@ -29,7 +29,7 @@ public class OlxDefaultAnalyzer implements AdAnalyzer {
     private final AdMatcher<OlxDefaultAdBody> olxDefaultAdMatcher;
     private final Mapper<OlxDefaultAdBody, Ad> olxDefaultAdMapper;
 
-    private final Platform platform = Platform.OLX;
+    private final Platform platform = Platform.OLXUA;
 
     public List<FilterAd> findNewFilterAd(Spot spot, List<Filter> filters) {
         final var ads = olxDefaultDownloader.downloadAds(spot);

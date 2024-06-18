@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
+import vnavesnoj.ads_loader_bot_persistence.database.entity.Category;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.User;
@@ -49,12 +50,19 @@ public class OlxDefaultAdMatcherTest {
             "dummy region"
     );
 
+    private final Category category1 = new Category(
+            null,
+            Platform.OLXUA,
+            "dummy name"
+    );
+
     private final Spot spot1 = new Spot(
             1,
-            Platform.OLX,
+            Platform.OLXUA,
             "dummy url",
             "dummy name",
-            Analyzer.OLX_DEFAULT
+            Analyzer.OLX_DEFAULT,
+            category1
     );
 
     private final String pattern1 = """

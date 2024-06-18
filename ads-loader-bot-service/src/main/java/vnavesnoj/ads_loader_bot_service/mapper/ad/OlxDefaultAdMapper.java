@@ -26,7 +26,7 @@ public class OlxDefaultAdMapper implements Mapper<OlxDefaultAdBody, Ad> {
         final var jsonBody = objectMapper.writeValueAsString(object);
         final var ad = Ad.builder()
                 .id(object.getId())
-                .platform(Platform.OLX)
+                .platform(Platform.OLXUA)
                 .url(object.getUrl())
                 .title(object.getTitle())
                 .instant(Instant.now())

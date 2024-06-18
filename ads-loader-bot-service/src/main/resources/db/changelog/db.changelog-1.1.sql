@@ -8,4 +8,13 @@ CREATE TABLE filter_builder
     platform VARCHAR(7)    NOT NULL,
     pattern  JSONB,
     user_id  BIGINT UNIQUE NOT NULL REFERENCES users ON DELETE CASCADE
-)
+);
+
+--changeset vnavesnoj:2
+CREATE TABLE category
+(
+    id       SERIAL PRIMARY KEY,
+    platform VARCHAR(7)   NOT NULL,
+    name     VARCHAR(255) NOT NULL,
+    UNIQUE (platform, name)
+);

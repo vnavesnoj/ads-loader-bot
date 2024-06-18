@@ -31,11 +31,13 @@ CREATE TABLE users
 --changeset vnavesnoj:4
 CREATE TABLE spot
 (
-    id       SERIAL PRIMARY KEY,
-    platform VARCHAR(7)   NOT NULL,
-    url      VARCHAR(255) NOT NULL,
-    name     VARCHAR(255) NOT NULL,
-    analyzer VARCHAR(15)
+    id          SERIAL PRIMARY KEY,
+    platform    VARCHAR(7)   NOT NULL,
+    url         VARCHAR(255) NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    analyzer    VARCHAR(15),
+    category_id INT          NOT NULL,
+    UNIQUE (platform, name)
 );
 
 --changeset vnavesnoj:5

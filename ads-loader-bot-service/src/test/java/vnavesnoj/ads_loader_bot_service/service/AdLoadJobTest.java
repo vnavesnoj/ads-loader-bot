@@ -40,12 +40,19 @@ public class AdLoadJobTest {
 
     private final Instant nowInstant = Instant.now();
 
+    private Category category1 = new Category(
+            null,
+            Platform.OLXUA,
+            "dummy name"
+    );
+
     private Spot spot1 = new Spot(
             null,
-            Platform.OLX,
+            Platform.OLXUA,
             "dummy url",
             "dummy name",
-            Analyzer.OLX_DEFAULT
+            Analyzer.OLX_DEFAULT,
+            category1
     );
 
     private final String pattern1 = """
@@ -79,7 +86,7 @@ public class AdLoadJobTest {
 
     private Ad ad1 = new Ad(
             1L,
-            Platform.OLX,
+            Platform.OLXUA,
             "dummy url",
             "dummy title",
             nowInstant,
