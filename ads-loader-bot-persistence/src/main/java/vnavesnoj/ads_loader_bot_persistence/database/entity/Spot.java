@@ -17,7 +17,7 @@ import vnavesnoj.ads_loader_bot_common.constant.Platform;
 @EqualsAndHashCode(of = "id")
 @Builder
 @Entity
-@Table(name = "spot", uniqueConstraints = @UniqueConstraint(columnNames = {"platform", "name"}))
+@Table(name = "spot", uniqueConstraints = @UniqueConstraint(columnNames = {"platform", "url"}))
 public class Spot {
 
     @Id

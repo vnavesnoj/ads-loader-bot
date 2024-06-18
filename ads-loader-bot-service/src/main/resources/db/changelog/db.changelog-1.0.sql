@@ -37,7 +37,7 @@ CREATE TABLE spot
     name        VARCHAR(255) NOT NULL,
     analyzer    VARCHAR(15),
     category_id INT          NOT NULL,
-    UNIQUE (platform, name)
+    UNIQUE (platform, url)
 );
 
 --changeset vnavesnoj:5
