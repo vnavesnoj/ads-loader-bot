@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_persistence.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 
 /**
@@ -36,7 +36,7 @@ public class Spot {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
-    Analyzer analyzer;
+    AnalyzerEnum analyzer;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     Category category;

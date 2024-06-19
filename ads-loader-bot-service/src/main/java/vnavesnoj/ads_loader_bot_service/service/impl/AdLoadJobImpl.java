@@ -64,7 +64,7 @@ public class AdLoadJobImpl implements AdLoadJob {
         final var groupedFilters = filters.stream()
                 .collect(Collectors.groupingBy(Filter::getSpot));
         for (Spot spot : groupedFilters.keySet()) {
-            AdAnalyzer analyzer = analyzerFactory.getAdAnalyzer(spot.getPlatform());
+            AdAnalyzer analyzer = analyzerFactory.getAdAnalyzer(spot.getAnalyzer());
             final var newFilterAds = analyzer.findNewFilterAd(spot, groupedFilters.get(spot));
             for (FilterAd newFilterAd : newFilterAds) {
                 saveOrUpdate(newFilterAd);

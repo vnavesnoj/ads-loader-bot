@@ -2,7 +2,7 @@ package vnavesnoj.ads_loader_bot_service.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_service.exception.AnalyzerInitializationException;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 
@@ -18,23 +18,23 @@ import static java.util.function.Predicate.not;
 @Component
 public class AnalyzerFactoryImpl implements AnalyzerFactory {
 
-    private final Map<Platform, AdAnalyzer> adAnalyzers;
+    private final Map<AnalyzerEnum, AdAnalyzer> adAnalyzers;
 
     //TODO need tests in future
     public AnalyzerFactoryImpl(@Autowired List<AdAnalyzer> adAnalyzers) {
         final var duplicateImplementations = getDuplicateImplementations(adAnalyzers);
-        final var notImplementedPlatforms = Arrays.stream(Platform.values())
-                .filter(platform -> adAnalyzers.stream()
-                        .noneMatch(analyzer -> analyzer.getAnalysisPlatform() == platform))
+        final var notImplementedAnalyzers = Arrays.stream(AnalyzerEnum.values())
+                .filter(item -> adAnalyzers.stream()
+                        .noneMatch(analyzer -> analyzer.getAnalyzerName() == item))
                 .toList();
-        if (notImplementedPlatforms.isEmpty() && duplicateImplementations.isEmpty()) {
+        if (notImplementedAnalyzers.isEmpty() && duplicateImplementations.isEmpty()) {
             this.adAnalyzers = new HashMap<>();
-            adAnalyzers.forEach(item -> this.adAnalyzers.put(item.getAnalysisPlatform(), item));
+            adAnalyzers.forEach(item -> this.adAnalyzers.put(item.getAnalyzerName(), item));
         } else if (duplicateImplementations.isEmpty()) {
-            throw new AnalyzerInitializationException("there are not implemented platforms: " + notImplementedPlatforms);
+            throw new AnalyzerInitializationException("there are not implemented platforms: " + notImplementedAnalyzers);
         } else {
             final var duplications = duplicateImplementations.stream()
-                    .map(item -> item.getClass().getName() + "(" + item.getAnalysisPlatform() + ")")
+                    .map(item -> item.getClass().getName() + "(" + item.getAnalyzerName() + ")")
                     .collect(Collectors.joining(",", "[", "]"));
             throw new AnalyzerInitializationException("there are duplicated implementations: " + duplications);
         }
@@ -46,14 +46,14 @@ public class AnalyzerFactoryImpl implements AnalyzerFactory {
     }
 
     @Override
-    public AdAnalyzer getAdAnalyzer(Platform platform) {
-        return adAnalyzers.get(platform);
+    public AdAnalyzer getAdAnalyzer(AnalyzerEnum analyzer) {
+        return adAnalyzers.get(analyzer);
     }
 
     private List<AdAnalyzer> getDuplicateImplementations(List<AdAnalyzer> analyzers) {
-        Set<Platform> platforms = new HashSet<>();
+        Set<AnalyzerEnum> analyzerEnums = new HashSet<>();
         return analyzers.stream()
-                .filter(not(item -> platforms.add(item.getAnalysisPlatform())))
+                .filter(not(item -> analyzerEnums.add(item.getAnalyzerName())))
                 .distinct()
                 .toList();
     }

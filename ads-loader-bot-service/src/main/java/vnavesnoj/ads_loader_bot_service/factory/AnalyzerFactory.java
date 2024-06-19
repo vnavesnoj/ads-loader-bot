@@ -1,6 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.factory;
 
-import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public interface AnalyzerFactory {
 
     List<AdAnalyzer> getAdAnalyzers();
 
-    AdAnalyzer getAdAnalyzer(Platform platform);
+    AdAnalyzer getAdAnalyzer(AnalyzerEnum analyzer);
 }

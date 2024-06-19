@@ -1,7 +1,7 @@
 package vnavesnoj.ads_loader_bot_service.dto.spot;
 
 import lombok.Value;
-import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 
 /**
@@ -19,5 +19,5 @@ public class SpotReadDto {
 
     String name;
 
-    Analyzer analyzer;
+    AnalyzerEnum analyzer;
 }

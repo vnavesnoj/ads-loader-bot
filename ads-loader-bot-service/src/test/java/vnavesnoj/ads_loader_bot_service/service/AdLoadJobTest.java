@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.*;
@@ -52,7 +52,7 @@ public class AdLoadJobTest {
             Platform.OLXUA,
             "dummy url",
             "dummy name",
-            Analyzer.OLX_DEFAULT,
+            AnalyzerEnum.OLX_UA_DEFAULT,
             category1
     );
 

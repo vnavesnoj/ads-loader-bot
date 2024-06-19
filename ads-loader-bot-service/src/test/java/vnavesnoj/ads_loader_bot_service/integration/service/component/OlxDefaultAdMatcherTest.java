@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_service.integration.service.component;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
-import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
@@ -62,7 +62,7 @@ public class OlxDefaultAdMatcherTest {
             Platform.OLXUA,
             "dummy url",
             "dummy name",
-            Analyzer.OLX_DEFAULT,
+            AnalyzerEnum.OLX_UA_DEFAULT,
             category1
     );
 

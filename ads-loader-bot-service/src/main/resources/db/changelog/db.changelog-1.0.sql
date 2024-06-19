@@ -36,7 +36,7 @@ CREATE TABLE spot
     platform    VARCHAR(7)   NOT NULL,
     url         VARCHAR(255) NOT NULL,
     name        VARCHAR(255) NOT NULL,
-    analyzer    VARCHAR(15),
+    analyzer    VARCHAR(15)  NOT NULL,
     category_id INT          NOT NULL,
     UNIQUE (platform, url)
 );

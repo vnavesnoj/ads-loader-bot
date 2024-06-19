@@ -1,6 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.service.component;
 
-import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 
 /**
  * @author vnavesnoj
@@ -8,5 +8,5 @@ import vnavesnoj.ads_loader_bot_common.constant.Platform;
  */
 public interface Analyzer {
 
-    Platform getAnalysisPlatform();
+    AnalyzerEnum getAnalyzerName();
 }
