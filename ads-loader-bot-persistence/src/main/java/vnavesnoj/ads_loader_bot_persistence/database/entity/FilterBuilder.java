@@ -36,6 +36,9 @@ public class FilterBuilder {
     @ColumnTransformer(write = "?::jsonb")
     String pattern;
 
+    @Column(length = 31)
+    String currentInput;
+
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     User user;
 }
