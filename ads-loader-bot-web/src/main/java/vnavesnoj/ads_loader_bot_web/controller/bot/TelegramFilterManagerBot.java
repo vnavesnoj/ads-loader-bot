@@ -8,8 +8,6 @@ import com.github.kshashov.telegram.api.bind.annotation.BotRequest;
 import com.github.kshashov.telegram.api.bind.annotation.request.MessageRequest;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -17,7 +15,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.PageRequest;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
@@ -29,8 +26,6 @@ import vnavesnoj.ads_loader_bot_service.service.UserService;
 import vnavesnoj.ads_loader_bot_web.state.chat.ChatStateFactory;
 
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 /**
@@ -108,24 +103,15 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 
-    @BotRequest(value = "olx.ua", type = MessageType.CALLBACK_QUERY)
-    public BaseRequest<SendMessage, SendResponse> chooseCategoryForOlxUa(User user, Chat chat) {
-        final var locale = Locale.of(user.languageCode());
-        final var atomicInteger = new AtomicInteger(0);
-        final var keyboard = new InlineKeyboardMarkup();
-        categoryService.findAll(PageRequest.of(0, 50)).stream()
-                .map(item -> new InlineKeyboardButton(item.getName()).callbackData("category=" + item.getId())
-                )
-                .collect(Collectors.groupingBy(item -> atomicInteger.getAndIncrement() / 2))
-                .values()
-                .stream()
-                .map(list -> list.toArray(InlineKeyboardButton[]::new))
-                .forEach(keyboard::addRow);
-        final var message = messageSource.getMessage("bot.create.search-platform", new Object[]{Platform.OLXUA.getDomain()}, locale) +
-                '\n' +
-                messageSource.getMessage("bot.create.choose-category", null, locale);
-        return new SendMessage(chat.id(), message)
-                .replyMarkup(keyboard);
+    @BotRequest(value = "/platform {platform:[\\S]+}", type = MessageType.CALLBACK_QUERY)
+    public BaseRequest<SendMessage, SendResponse> onChoosePlatform(User user,
+                                                                   Chat chat,
+                                                                   @BotPathVariable("platform") String platform) {
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onChoosePlatform(user, chat, Platform.valueOf(platform)))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 
     private BaseRequest<SendMessage, SendResponse> userNotRegistered(User user, Chat chat) {
