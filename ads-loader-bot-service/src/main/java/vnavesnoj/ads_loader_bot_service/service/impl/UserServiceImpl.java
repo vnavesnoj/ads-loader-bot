@@ -3,6 +3,7 @@ package vnavesnoj.ads_loader_bot_service.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.User;
 import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
@@ -52,6 +53,17 @@ public class UserServiceImpl implements UserService {
     public Optional<UserReadDto> patch(Long id, @NonNull UserEditDto user) {
         return userRepository.findById(id)
                 .map(entity -> userEditMapper.map(user, entity))
+                .map(userRepository::saveAndFlush)
+                .map(userReadMapper::map);
+    }
+
+    @Override
+    public Optional<UserReadDto> updateChatState(Long id, ChatStateEnum chatState) {
+        return userRepository.findById(id)
+                .map(item -> {
+                    item.setChatState(chatState);
+                    return item;
+                })
                 .map(userRepository::saveAndFlush)
                 .map(userReadMapper::map);
     }

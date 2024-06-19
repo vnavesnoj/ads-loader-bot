@@ -18,13 +18,16 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
 import vnavesnoj.ads_loader_bot_service.factory.AnalyzerFactory;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
+import vnavesnoj.ads_loader_bot_web.state.chat.ChatStateFactory;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -43,6 +46,7 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
     private final CategoryService categoryService;
     private final FilterBuilderService filterBuilderService;
     private final AnalyzerFactory analyzerFactory;
+    private final ChatStateFactory chatStateFactory;
 
     private final MessageSource messageSource;
 
@@ -52,12 +56,14 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                                     CategoryService categoryService,
                                     FilterBuilderService filterBuilderService,
                                     AnalyzerFactory analyzerFactory,
+                                    ChatStateFactory chatStateFactory,
                                     MessageSource messageSource) {
         this.token = token;
         this.userService = userService;
         this.categoryService = categoryService;
         this.filterBuilderService = filterBuilderService;
         this.analyzerFactory = analyzerFactory;
+        this.chatStateFactory = chatStateFactory;
         this.messageSource = messageSource;
     }
 
@@ -69,6 +75,17 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
     @Override
     public String getToken() {
         return token;
+    }
+
+    @BotRequest(value = "/start", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
+    public BaseRequest<SendMessage, SendResponse> start(User user, Chat chat) {
+        userService.create(new UserCreateDto(user.id(), user.languageCode(), ChatStateEnum.START));
+        final var message = messageSource.getMessage(
+                "bot.greeting",
+                new Object[]{user.username()},
+                Locale.of(user.languageCode())
+        );
+        return new SendMessage(chat.id(), message);
     }
 
     @MessageRequest("/hello")
@@ -84,14 +101,11 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
 
     @MessageRequest("/create")
     public BaseRequest<SendMessage, SendResponse> create(User user, Chat chat) {
-        final var locale = Locale.of(user.languageCode());
-        final var buttons = Arrays.stream(Platform.values())
-                .map(item -> new InlineKeyboardButton(item.getDomain()).callbackData(item.getDomain()))
-                .toArray(InlineKeyboardButton[]::new);
-        final var keybord = new InlineKeyboardMarkup(buttons);
-        final var message = messageSource.getMessage("bot.create.choose-platform", null, locale);
-        return new SendMessage(chat.id(), message)
-                .replyMarkup(keybord);
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onCreate(user, chat))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 
     @BotRequest(value = "olx.ua", type = MessageType.CALLBACK_QUERY)
@@ -112,5 +126,10 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 messageSource.getMessage("bot.create.choose-category", null, locale);
         return new SendMessage(chat.id(), message)
                 .replyMarkup(keyboard);
+    }
+
+    private BaseRequest<SendMessage, SendResponse> userNotRegistered(User user, Chat chat) {
+        final var message = messageSource.getMessage("bot.user-not-registered", null, Locale.of(user.languageCode()));
+        return new SendMessage(chat.id(), message);
     }
 }

@@ -6,5 +6,5 @@ package vnavesnoj.ads_loader_bot_common.constant;
  */
 public enum ChatStateEnum {
 
-    START
+    START, BUILDER_START
 }

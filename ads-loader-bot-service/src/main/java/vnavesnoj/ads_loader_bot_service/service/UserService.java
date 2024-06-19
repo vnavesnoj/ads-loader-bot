@@ -1,5 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.service;
 
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
@@ -17,6 +18,8 @@ public interface UserService {
     UserReadDto create(UserCreateDto user);
 
     Optional<UserReadDto> patch(Long id, UserEditDto user);
+
+    Optional<UserReadDto> updateChatState(Long id, ChatStateEnum chatState);
 
     boolean delete(Long id);
 }

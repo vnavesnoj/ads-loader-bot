@@ -13,4 +13,6 @@ public interface FilterBuilderService {
     Optional<FilterBuilderReadDto> findById(Long id);
 
     Optional<FilterBuilderReadDto> findByUserId(Long userId);
+
+    boolean deleteByUserId(Long userId);
 }

@@ -33,4 +33,15 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
         return filterBuilderRepository.findByUserId(userId)
                 .map(filterBuilderReadMapper::map);
     }
+
+    @Override
+    public boolean deleteByUserId(Long userId) {
+        return filterBuilderRepository.findByUserId(userId)
+                .map(item -> {
+                    filterBuilderRepository.delete(item);
+                    filterBuilderRepository.flush();
+                    return true;
+                })
+                .orElse(false);
+    }
 }
