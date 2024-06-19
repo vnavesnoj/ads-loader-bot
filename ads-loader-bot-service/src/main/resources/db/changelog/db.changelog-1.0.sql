@@ -24,8 +24,9 @@ CREATE TABLE users
 (
     id            BIGINT PRIMARY KEY,
     language_code VARCHAR(7),
-    instant       TIMESTAMP NOT NULL,
-    notify        BOOLEAN   NOT NULL
+    instant       TIMESTAMP   NOT NULL,
+    notify        BOOLEAN     NOT NULL,
+    chat_state    VARCHAR(31) NOT NULL DEFAULT 'START'
 );
 
 --changeset vnavesnoj:4

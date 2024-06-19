@@ -16,7 +16,7 @@ public class UserEditMapper implements Mapper<UserEditDto, User> {
     public User map(UserEditDto object) {
         final var user = new User();
         copy(object, user);
-        return null;
+        return user;
     }
 
     @Override

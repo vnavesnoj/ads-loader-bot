@@ -1,11 +1,9 @@
 package vnavesnoj.ads_loader_bot_persistence.database.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vnavesnoj.ads_loader_bot_common.constant.ChatState;
 
 import java.time.Instant;
 
@@ -33,4 +31,8 @@ public class User {
 
     @Column(nullable = false)
     boolean notify;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 31)
+    ChatState chatState;
 }
