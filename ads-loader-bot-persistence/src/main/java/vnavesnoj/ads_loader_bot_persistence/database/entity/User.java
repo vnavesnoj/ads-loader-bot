@@ -3,7 +3,7 @@ package vnavesnoj.ads_loader_bot_persistence.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import vnavesnoj.ads_loader_bot_common.constant.ChatState;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 
 import java.time.Instant;
 
@@ -34,5 +34,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 31)
-    ChatState chatState;
+    ChatStateEnum chatState;
 }

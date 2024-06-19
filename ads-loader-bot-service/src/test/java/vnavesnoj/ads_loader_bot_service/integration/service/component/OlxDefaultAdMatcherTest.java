@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import vnavesnoj.ads_loader_bot_common.constant.Analyzer;
-import vnavesnoj.ads_loader_bot_common.constant.ChatState;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Category;
@@ -181,7 +181,7 @@ public class OlxDefaultAdMatcherTest {
             "dummy code",
             nowInstant,
             true,
-            ChatState.START
+            ChatStateEnum.START
     );
 
     private final Filter filter1 = new Filter(

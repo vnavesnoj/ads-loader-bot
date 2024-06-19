@@ -2,6 +2,7 @@ package vnavesnoj.ads_loader_bot_service.dto.user;
 
 import lombok.NonNull;
 import lombok.Value;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 
 /**
  * @author vnavesnoj
@@ -14,4 +15,6 @@ public class UserCreateDto {
     Long id;
 
     String languageCode;
+
+    ChatStateEnum chatState;
 }

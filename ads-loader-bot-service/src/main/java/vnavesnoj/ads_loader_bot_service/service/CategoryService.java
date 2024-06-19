@@ -2,7 +2,7 @@ package vnavesnoj.ads_loader_bot_service.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import vnavesnoj.ads_loader_bot_service.dto.CategoryReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.category.CategoryReadDto;
 
 /**
  * @author vnavesnoj

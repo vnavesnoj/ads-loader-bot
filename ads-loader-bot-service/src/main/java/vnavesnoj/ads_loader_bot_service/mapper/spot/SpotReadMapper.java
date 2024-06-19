@@ -18,7 +18,8 @@ public class SpotReadMapper implements Mapper<Spot, SpotReadDto> {
                 object.getId(),
                 object.getPlatform(),
                 object.getUrl(),
-                object.getName()
+                object.getName(),
+                object.getAnalyzer()
         );
     }
 }

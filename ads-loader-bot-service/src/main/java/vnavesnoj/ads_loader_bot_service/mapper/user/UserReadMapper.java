@@ -18,7 +18,8 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
                 object.getId(),
                 object.getLanguageCode(),
                 object.getInstant(),
-                object.isNotify()
+                object.isNotify(),
+                object.getChatState()
         );
     }
 }

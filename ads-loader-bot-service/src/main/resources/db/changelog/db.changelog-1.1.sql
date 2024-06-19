@@ -5,9 +5,9 @@ CREATE TABLE filter_builder
 (
     id            BIGSERIAL PRIMARY KEY,
     instant       TIMESTAMP     NOT NULL,
-    platform      VARCHAR(7)    NOT NULL,
     pattern       JSONB,
     current_input VARCHAR(31),
+    spot_id       INT           NOT NULL REFERENCES spot,
     user_id       BIGINT UNIQUE NOT NULL REFERENCES users ON DELETE CASCADE
 );
 

@@ -1,6 +1,7 @@
 package vnavesnoj.ads_loader_bot_service.dto.user;
 
 import lombok.Value;
+import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 
 import java.time.Instant;
 
@@ -18,4 +19,6 @@ public class UserReadDto {
     Instant instant;
 
     boolean notify;
+
+    ChatStateEnum chatState;
 }

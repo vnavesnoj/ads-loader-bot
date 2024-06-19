@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnTransformer;
-import vnavesnoj.ads_loader_bot_common.constant.Platform;
 
 import java.time.Instant;
 
@@ -28,16 +27,15 @@ public class FilterBuilder {
     @Column(nullable = false, columnDefinition = "timestamp")
     Instant instant;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Platform platform;
-
     @Column(name = "pattern", nullable = false, columnDefinition = "jsonb")
     @ColumnTransformer(write = "?::jsonb")
     String pattern;
 
     @Column(length = 31)
     String currentInput;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    Spot spot;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     User user;

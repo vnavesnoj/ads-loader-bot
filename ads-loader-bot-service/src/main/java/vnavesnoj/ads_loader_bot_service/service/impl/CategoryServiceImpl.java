@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Category;
 import vnavesnoj.ads_loader_bot_service.database.repository.CategoryRepository;
-import vnavesnoj.ads_loader_bot_service.dto.CategoryReadDto;
+import vnavesnoj.ads_loader_bot_service.dto.category.CategoryReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 

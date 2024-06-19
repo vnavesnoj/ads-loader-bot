@@ -17,6 +17,7 @@ public class UserCreateMapper implements Mapper<UserCreateDto, User> {
         return User.builder()
                 .id(object.getId())
                 .languageCode(object.getLanguageCode())
+                .chatState(object.getChatState())
                 .build();
     }
 }
