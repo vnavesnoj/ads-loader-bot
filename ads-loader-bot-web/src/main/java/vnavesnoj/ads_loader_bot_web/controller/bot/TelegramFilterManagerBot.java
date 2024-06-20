@@ -114,6 +114,17 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 
+    @BotRequest(value = "/category {categoryId:[\\d]+}")
+    public BaseRequest<SendMessage, SendResponse> onChooseCategory(User user,
+                                                                   Chat chat,
+                                                                   @BotPathVariable("categoryId") Integer categoryId) {
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onChooseCategory(user, chat, categoryId))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
+    }
+
     private BaseRequest<SendMessage, SendResponse> userNotRegistered(User user, Chat chat) {
         final var message = messageSource.getMessage("bot.user-not-registered", null, Locale.of(user.languageCode()));
         return new SendMessage(chat.id(), message);

@@ -11,6 +11,8 @@ import vnavesnoj.ads_loader_bot_service.dto.category.CategoryReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 
+import java.util.Optional;
+
 /**
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
@@ -31,6 +33,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Page<CategoryReadDto> findAllByPlatform(Platform platform, Pageable pageable) {
         return categoryRepository.findAllByPlatform(platform, pageable)
+                .map(categoryReadMapper::map);
+    }
+
+    @Override
+    public Optional<CategoryReadDto> findById(Integer id) {
+        return categoryRepository.findById(id)
                 .map(categoryReadMapper::map);
     }
 }

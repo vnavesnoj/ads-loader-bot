@@ -20,5 +20,7 @@ public interface ChatState {
 
     BaseRequest<SendMessage, SendResponse> onChoosePlatform(User user, Chat chat, Platform platform);
 
+    BaseRequest<SendMessage, SendResponse> onChooseCategory(User user, Chat chat, Integer categoryId);
+
     ChatStateEnum getName();
 }

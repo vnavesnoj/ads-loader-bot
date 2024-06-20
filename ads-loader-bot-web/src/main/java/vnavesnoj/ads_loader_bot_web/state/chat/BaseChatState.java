@@ -14,6 +14,7 @@ import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_service.service.SpotService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
 
 import java.util.Arrays;
@@ -31,6 +32,7 @@ public abstract class BaseChatState implements ChatState {
     private final UserService userService;
     private final FilterBuilderService filterBuilderService;
     private final CategoryService categoryService;
+    private final SpotService spotService;
     private final MessageSource messageSource;
 
     @Override
@@ -91,5 +93,40 @@ public abstract class BaseChatState implements ChatState {
                 messageSource.getMessage("bot.create.choose-category", null, locale);
         return new SendMessage(chat.id(), message)
                 .replyMarkup(keyboard);
+    }
+
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onChooseCategory(User user, Chat chat, Integer categoryId) {
+        final var locale = Locale.of(user.languageCode());
+        if (filterBuilderService.findByUserId(user.id()).isPresent()) {
+            return writeFilterBuilderExists(chat, locale);
+        }
+        final var maybeCategory = categoryService.findById(categoryId);
+        if (maybeCategory.isEmpty()) {
+            return writeCategoryNotExists(categoryId, chat, locale);
+        }
+        final var categoryDto = maybeCategory.get();
+        final var atomicInteger = new AtomicInteger(0);
+        final var keyboard = new InlineKeyboardMarkup();
+        spotService.findAllByCategoryId(categoryId, PageRequest.of(0, 50)).stream()
+                .map(item -> new InlineKeyboardButton(item.getName()).callbackData("/spot " + item.getId())
+                )
+                .collect(Collectors.groupingBy(item -> atomicInteger.getAndIncrement() / 2))
+                .values()
+                .stream()
+                .map(list -> list.toArray(InlineKeyboardButton[]::new))
+                .forEach(keyboard::addRow);
+        final var message = messageSource.getMessage("bot.create.search-platform", new Object[]{categoryDto.getPlatform().getDomain()}, locale) +
+                '\n' +
+                messageSource.getMessage("bot.create.category", new Object[]{categoryDto.getName()}, locale) +
+                '\n' +
+                messageSource.getMessage("bot.create.choose-spot", null, locale);
+        return new SendMessage(chat.id(), message)
+                .replyMarkup(keyboard);
+    }
+
+    private BaseRequest<SendMessage, SendResponse> writeCategoryNotExists(Integer categoryId, Chat chat, Locale locale) {
+        final var message = messageSource.getMessage("bot.category-not-exists", null, locale);
+        return new SendMessage(chat.id(), message);
     }
 }
