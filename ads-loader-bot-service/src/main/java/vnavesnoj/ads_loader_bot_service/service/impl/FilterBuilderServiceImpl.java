@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderRepository;
+import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
+import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
+import vnavesnoj.ads_loader_bot_service.dto.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
@@ -19,13 +22,25 @@ import java.util.Optional;
 public class FilterBuilderServiceImpl implements FilterBuilderService {
 
     private final FilterBuilderRepository filterBuilderRepository;
+    private final UserRepository userRepository;
+    private final SpotRepository spotRepository;
 
     private final Mapper<FilterBuilder, FilterBuilderReadDto> filterBuilderReadMapper;
+    private final Mapper<FilterBuilderCreateDto, FilterBuilder> filterBuilderCreateMapper;
 
     @Override
     public Optional<FilterBuilderReadDto> findById(Long id) {
         return filterBuilderRepository.findById(id)
                 .map(filterBuilderReadMapper::map);
+    }
+
+    @Override
+    public FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder) {
+        return Optional.ofNullable(filterBuilder)
+                .map(filterBuilderCreateMapper::map)
+                .map(filterBuilderRepository::saveAndFlush)
+                .map(filterBuilderReadMapper::map)
+                .orElseThrow(NullPointerException::new);
     }
 
     @Override

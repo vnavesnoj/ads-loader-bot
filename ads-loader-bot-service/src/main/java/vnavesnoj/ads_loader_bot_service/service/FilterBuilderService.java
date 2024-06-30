@@ -1,5 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.service;
 
+import vnavesnoj.ads_loader_bot_service.dto.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 
 import java.util.Optional;
@@ -13,6 +14,8 @@ public interface FilterBuilderService {
     Optional<FilterBuilderReadDto> findById(Long id);
 
     Optional<FilterBuilderReadDto> findByUserId(Long userId);
+
+    FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder);
 
     boolean deleteByUserId(Long userId);
 }
