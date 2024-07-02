@@ -10,6 +10,8 @@ import vnavesnoj.ads_loader_bot_service.dto.spot.SpotReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 
+import java.util.Optional;
+
 /**
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
@@ -24,6 +26,12 @@ public class SpotServiceImpl implements SpotService {
     @Override
     public Page<SpotReadDto> findAllByCategoryId(Integer categoryId, Pageable pageable) {
         return spotRepository.findAllByCategoryId(categoryId, pageable)
+                .map(spotReadMapper::map);
+    }
+
+    @Override
+    public Optional<SpotReadDto> findById(Integer id) {
+        return spotRepository.findById(id)
                 .map(spotReadMapper::map);
     }
 }

@@ -2,8 +2,6 @@ package vnavesnoj.ads_loader_bot_common.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
-import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 
 /**
  * @author vnavesnoj
@@ -13,11 +11,7 @@ import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 @Getter
 public enum Platform {
 
-    OLXUA("olx.ua", OlxDefaultPattern.class, OlxDefaultAdBody.class);
+    OLXUA("olx.ua");
 
     private final String domain;
-
-    private final Class<?> patternClass;
-
-    private final Class<?> adBodyClass;
 }

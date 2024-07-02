@@ -14,6 +14,8 @@ import vnavesnoj.ads_loader_bot_service.exception.SpotNotExistsException;
 import vnavesnoj.ads_loader_bot_service.exception.UserNotExistsException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
+import java.time.Instant;
+
 /**
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
@@ -40,6 +42,7 @@ public class FilterBuilderCreateMapper implements Mapper<FilterBuilderCreateDto,
         }
         return FilterBuilder.builder()
                 .pattern(objectMapper.writeValueAsString(filterBuilder.getPattern()))
+                .instant(Instant.now())
                 .spot(spot)
                 .user(user)
                 .build();

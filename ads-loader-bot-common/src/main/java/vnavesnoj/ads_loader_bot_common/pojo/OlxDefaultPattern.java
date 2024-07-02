@@ -1,9 +1,6 @@
 package vnavesnoj.ads_loader_bot_common.pojo;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vnavesnoj.ads_loader_bot_common.constant.CurrencyCode;
 import vnavesnoj.ads_loader_bot_common.constant.PriceType;
@@ -16,6 +13,7 @@ import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OlxDefaultPattern {
 
     String[] descriptionPatterns;

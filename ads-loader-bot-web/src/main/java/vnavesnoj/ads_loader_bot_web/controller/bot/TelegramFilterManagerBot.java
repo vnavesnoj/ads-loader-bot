@@ -114,7 +114,7 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 
-    @BotRequest(value = "/category {categoryId:[\\d]+}")
+    @BotRequest(value = "/category {categoryId:[\\d]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChooseCategory(User user,
                                                                    Chat chat,
                                                                    @BotPathVariable("categoryId") Integer categoryId) {
@@ -122,6 +122,17 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .map(UserReadDto::getChatState)
                 .map(chatStateFactory::getChatStateByName)
                 .map(item -> item.onChooseCategory(user, chat, categoryId))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
+    }
+
+    @BotRequest(value = "/spot {spotId:[\\d]+}", type = MessageType.CALLBACK_QUERY)
+    public BaseRequest<SendMessage, SendResponse> onChooseSpot(User user,
+                                                               Chat chat,
+                                                               @BotPathVariable("spotId") Integer spotId) {
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onChooseSpot(user, chat, spotId))
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 

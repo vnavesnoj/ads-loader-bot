@@ -16,6 +16,7 @@ import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
+import vnavesnoj.ads_loader_bot_web.factory.builderassistant.FilterBuilderAssistantFactory;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -33,6 +34,7 @@ public abstract class BaseChatState implements ChatState {
     private final FilterBuilderService filterBuilderService;
     private final CategoryService categoryService;
     private final SpotService spotService;
+    private final FilterBuilderAssistantFactory filterBuilderAssistantFactory;
     private final MessageSource messageSource;
 
     @Override
@@ -42,19 +44,6 @@ public abstract class BaseChatState implements ChatState {
             return writeFilterBuilderExists(chat, locale);
         }
         return onForceCreate(user, chat);
-    }
-
-    private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {
-        final var message = messageSource.getMessage("bot.create.filter-builder-already-exists", null, locale);
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(new InlineKeyboardButton(
-                        messageSource.getMessage("bot.create.button.go-to-builder", null, locale)
-                ).callbackData("/builder"))
-                .addRow(new InlineKeyboardButton(
-                        messageSource.getMessage("bot.create.button.create-new-filter", null, locale)
-                ).callbackData("/force-create"));
-        return new SendMessage(chat.id(), message)
-                .replyMarkup(keyboard);
     }
 
     @Override
@@ -103,7 +92,7 @@ public abstract class BaseChatState implements ChatState {
         }
         final var maybeCategory = categoryService.findById(categoryId);
         if (maybeCategory.isEmpty()) {
-            return writeCategoryNotExists(categoryId, chat, locale);
+            return writeCategoryNotExists(chat, locale);
         }
         final var categoryDto = maybeCategory.get();
         final var atomicInteger = new AtomicInteger(0);
@@ -118,15 +107,48 @@ public abstract class BaseChatState implements ChatState {
                 .forEach(keyboard::addRow);
         final var message = messageSource.getMessage("bot.create.search-platform", new Object[]{categoryDto.getPlatform().getDomain()}, locale) +
                 '\n' +
-                messageSource.getMessage("bot.create.category", new Object[]{categoryDto.getName()}, locale) +
+                messageSource.getMessage("bot.category", new Object[]{categoryDto.getName()}, locale) +
                 '\n' +
                 messageSource.getMessage("bot.create.choose-spot", null, locale);
         return new SendMessage(chat.id(), message)
                 .replyMarkup(keyboard);
     }
 
-    private BaseRequest<SendMessage, SendResponse> writeCategoryNotExists(Integer categoryId, Chat chat, Locale locale) {
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onChooseSpot(User user, Chat chat, Integer spotId) {
+        final var locale = Locale.of(user.languageCode());
+        if (filterBuilderService.findByUserId(user.id()).isPresent()) {
+            return writeFilterBuilderExists(chat, locale);
+        }
+        final var maybeSpot = spotService.findById(spotId);
+        if (maybeSpot.isEmpty()) {
+            return writeSpotNotExists(chat, locale);
+        }
+        //TODO
+        return filterBuilderAssistantFactory.getAssistant(maybeSpot.get().getAnalyzer())
+                .createNewFilterBuilder(user.id(), chat.id(), spotId, locale);
+    }
+
+    private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {
+        final var message = messageSource.getMessage("bot.create.filter-builder-already-exists", null, locale);
+        final var keyboard = new InlineKeyboardMarkup()
+                .addRow(new InlineKeyboardButton(
+                        messageSource.getMessage("bot.create.button.go-to-builder", null, locale)
+                ).callbackData("/builder"))
+                .addRow(new InlineKeyboardButton(
+                        messageSource.getMessage("bot.create.button.create-new-filter", null, locale)
+                ).callbackData("/force-create"));
+        return new SendMessage(chat.id(), message)
+                .replyMarkup(keyboard);
+    }
+
+    private BaseRequest<SendMessage, SendResponse> writeCategoryNotExists(Chat chat, Locale locale) {
         final var message = messageSource.getMessage("bot.category-not-exists", null, locale);
+        return new SendMessage(chat.id(), message);
+    }
+
+    private BaseRequest<SendMessage, SendResponse> writeSpotNotExists(Chat chat, Locale locale) {
+        final var message = messageSource.getMessage("bot.spot-not-exists", null, locale);
         return new SendMessage(chat.id(), message);
     }
 }

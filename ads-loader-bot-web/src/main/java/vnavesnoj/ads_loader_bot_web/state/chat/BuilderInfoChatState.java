@@ -14,21 +14,21 @@ import vnavesnoj.ads_loader_bot_web.factory.builderassistant.FilterBuilderAssist
  * @mail vnavesnoj@gmail.com
  */
 @Component
-public class StartChatState extends BaseChatState {
+public class BuilderInfoChatState extends BaseChatState {
 
-    private final ChatStateEnum name = ChatStateEnum.START;
+    private final ChatStateEnum chatStateName = ChatStateEnum.BUILDER_INFO;
 
-    public StartChatState(UserService userService,
-                          FilterBuilderService filterBuilderService,
-                          CategoryService categoryService,
-                          SpotService spotService,
-                          FilterBuilderAssistantFactory filterBuilderAssistantFactory,
-                          MessageSource messageSource) {
+    public BuilderInfoChatState(UserService userService,
+                                FilterBuilderService filterBuilderService,
+                                CategoryService categoryService,
+                                SpotService spotService,
+                                FilterBuilderAssistantFactory filterBuilderAssistantFactory,
+                                MessageSource messageSource) {
         super(userService, filterBuilderService, categoryService, spotService, filterBuilderAssistantFactory, messageSource);
     }
 
     @Override
     public ChatStateEnum getName() {
-        return name;
+        return chatStateName;
     }
 }

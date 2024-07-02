@@ -2,6 +2,7 @@ package vnavesnoj.ads_loader_bot_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
@@ -18,6 +19,7 @@ import java.util.Optional;
  * @mail vnavesnoj@gmail.com
  */
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class FilterBuilderServiceImpl implements FilterBuilderService {
 
@@ -35,6 +37,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    @Transactional
     public FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder) {
         return Optional.ofNullable(filterBuilder)
                 .map(filterBuilderCreateMapper::map)
@@ -50,6 +53,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    @Transactional
     public boolean deleteByUserId(Long userId) {
         return filterBuilderRepository.findByUserId(userId)
                 .map(item -> {

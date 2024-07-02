@@ -7,6 +7,7 @@ import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
+import vnavesnoj.ads_loader_bot_web.factory.builderassistant.FilterBuilderAssistantFactory;
 
 /**
  * @author vnavesnoj
@@ -15,25 +16,15 @@ import vnavesnoj.ads_loader_bot_service.service.UserService;
 @Component
 public class BuilderStartChatState extends BaseChatState {
 
-    private final UserService userService;
-    private final FilterBuilderService filterBuilderService;
-    private final MessageSource messageSource;
-    private final CategoryService categoryService;
-    private final SpotService spotService;
-
     private final ChatStateEnum chatStateName = ChatStateEnum.BUILDER_START;
 
     public BuilderStartChatState(UserService userService,
                                  FilterBuilderService filterBuilderService,
                                  MessageSource messageSource,
                                  CategoryService categoryService,
-                                 SpotService spotService) {
-        super(userService, filterBuilderService, categoryService, spotService, messageSource);
-        this.userService = userService;
-        this.filterBuilderService = filterBuilderService;
-        this.categoryService = categoryService;
-        this.spotService = spotService;
-        this.messageSource = messageSource;
+                                 SpotService spotService,
+                                 FilterBuilderAssistantFactory filterBuilderAssistantFactory) {
+        super(userService, filterBuilderService, categoryService, spotService, filterBuilderAssistantFactory, messageSource);
     }
 
     @Override
