@@ -47,6 +47,29 @@ public abstract class BaseChatState implements ChatState {
     }
 
     @Override
+    public BaseRequest<SendMessage, SendResponse> onBuilder(User user, Chat chat) {
+        final var locale = Locale.of(user.languageCode());
+        return filterBuilderService.findByUserId(user.id())
+                .map(item -> {
+                    final var message = filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
+                            .getCurrentFilterBuilder(item, chat.id(), locale);
+                    userService.updateChatState(user.id(), ChatStateEnum.BUILDER_INFO);
+                    return message;
+                })
+                .orElseGet(() -> this.onBuilderWhenEmpty(chat.id(), locale));
+    }
+
+    private BaseRequest<SendMessage, SendResponse> onBuilderWhenEmpty(Long chatId, Locale locale) {
+        final var button = new InlineKeyboardButton(
+                messageSource.getMessage("bot.create.button.create-new-filter", null, locale)
+        ).callbackData("/force-create");
+        final var keybord = new InlineKeyboardMarkup()
+                .addRow(button);
+        return new SendMessage(chatId, messageSource.getMessage("bot.create.builder-is-empty", null, locale))
+                .replyMarkup(keybord);
+    }
+
+    @Override
     public BaseRequest<SendMessage, SendResponse> onForceCreate(User user, Chat chat) {
         filterBuilderService.deleteByUserId(user.id());
         final var locale = Locale.of(user.languageCode());
@@ -125,8 +148,10 @@ public abstract class BaseChatState implements ChatState {
             return writeSpotNotExists(chat, locale);
         }
         //TODO
-        return filterBuilderAssistantFactory.getAssistant(maybeSpot.get().getAnalyzer())
+        final var message = filterBuilderAssistantFactory.getAssistant(maybeSpot.get().getAnalyzer())
                 .createNewFilterBuilder(user.id(), chat.id(), spotId, locale);
+        userService.updateChatState(user.id(), ChatStateEnum.BUILDER_INFO);
+        return message;
     }
 
     private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {

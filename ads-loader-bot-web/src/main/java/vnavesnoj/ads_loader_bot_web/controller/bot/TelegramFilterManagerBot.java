@@ -94,7 +94,7 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
         return "Hello, " + userName;
     }
 
-    @MessageRequest("/create")
+    @BotRequest(value = "/create", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> create(User user, Chat chat) {
         return userService.findById(user.id())
                 .map(UserReadDto::getChatState)
@@ -142,6 +142,15 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .map(UserReadDto::getChatState)
                 .map(chatStateFactory::getChatStateByName)
                 .map(item -> item.onForceCreate(user, chat))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
+    }
+
+    @BotRequest(value = "/builder", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
+    public BaseRequest<SendMessage, SendResponse> onBuilder(User user, Chat chat) {
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onBuilder(user, chat))
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 

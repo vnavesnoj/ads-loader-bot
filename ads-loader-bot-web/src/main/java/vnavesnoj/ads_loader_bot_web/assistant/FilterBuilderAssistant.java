@@ -3,6 +3,7 @@ package vnavesnoj.ads_loader_bot_web.assistant;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 
 import java.util.Locale;
 
@@ -12,7 +13,7 @@ import java.util.Locale;
  */
 public interface FilterBuilderAssistant extends Assistant {
 
-    BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilderRequest(Long filterBuilderId);
+    BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilder(FilterBuilderReadDto filterBuilder, Long chatId, Locale locale);
 
     BaseRequest<SendMessage, SendResponse> createNewFilterBuilder(Long userId, Long chatId, Integer spotId, Locale locale);
 }

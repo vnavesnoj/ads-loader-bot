@@ -1,9 +1,11 @@
 package vnavesnoj.ads_loader_bot_web.assistant;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
@@ -12,6 +14,7 @@ import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_service.dto.FilterBuilderCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 
@@ -40,11 +43,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     @Override
-    public BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilderRequest(Long filterBuilderId) {
-        return null;
+    public BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilder(FilterBuilderReadDto filterBuilder, Long chatId, Locale locale) {
+        return this.getFilterBuilderMessage(chatId, locale, filterBuilder);
     }
 
-    @SneakyThrows
     @Override
     public BaseRequest<SendMessage, SendResponse> createNewFilterBuilder(Long userId, Long chatId, Integer spotId, Locale locale) {
         final var createdBuilder = Optional.of(OlxDefaultPattern.builder()
@@ -53,7 +55,13 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .map(pattern -> new FilterBuilderCreateDto(pattern, spotId, userId))
                 .map(filterBuilderService::create)
                 .orElseThrow(RuntimeException::new);
-        final OlxDefaultPattern pattern = objectMapper.readValue(createdBuilder.getPattern(), OlxDefaultPattern.class);
+        return getFilterBuilderMessage(chatId, locale, createdBuilder);
+    }
+
+    @NonNull
+    @SneakyThrows(JsonProcessingException.class)
+    private SendMessage getFilterBuilderMessage(Long chatId, Locale locale, FilterBuilderReadDto filterBuilder) {
+        final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
 
         final String descriptionPatterns = pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
                 ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale) + ';'
@@ -83,8 +91,8 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 : Arrays.toString(pattern.getRegionNames()) + ';';
 
         final String message = messageSource.getMessage("bot.create.filter-builder-created", null, locale) + "\n\n" +
-                messageSource.getMessage("bot.filter.info.platform", new Object[]{createdBuilder.getSpot().getPlatform().getDomain()}, locale) + '\n' +
-                messageSource.getMessage("bot.category", new Object[]{createdBuilder.getSpot().getName()}, locale) + '\n' +
+                messageSource.getMessage("bot.filter.info.platform", new Object[]{filterBuilder.getSpot().getPlatform().getDomain()}, locale) + '\n' +
+                messageSource.getMessage("bot.category", new Object[]{filterBuilder.getSpot().getName()}, locale) + '\n' +
                 messageSource.getMessage("bot.create.fill-in-the-details", null, locale) + ":\n" +
                 "1. " + messageSource.getMessage("bot.filter.info.description-patterns", new Object[]{descriptionPatterns}, locale) + '\n' +
                 "2. " + messageSource.getMessage("bot.filter.info.price-type", new Object[]{priceType}, locale) + '\n' +

@@ -16,6 +16,8 @@ public interface ChatState {
 
     BaseRequest<SendMessage, SendResponse> onCreate(User user, Chat chat);
 
+    BaseRequest<SendMessage, SendResponse> onBuilder(User user, Chat chat);
+
     BaseRequest<SendMessage, SendResponse> onForceCreate(User user, Chat chat);
 
     BaseRequest<SendMessage, SendResponse> onChoosePlatform(User user, Chat chat, Platform platform);
