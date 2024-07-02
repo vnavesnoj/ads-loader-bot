@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterRepository;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterCreateDto;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @mail vnavesnoj@gmail.com
  */
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class FilterServiceImpl implements FilterService {
 
@@ -51,6 +53,7 @@ public class FilterServiceImpl implements FilterService {
                 .map(filterReadMapper::map);
     }
 
+    @Transactional
     @Override
     public FilterReadDto create(@NonNull FilterCreateDto filter) {
         return Optional.of(filter)
@@ -65,6 +68,7 @@ public class FilterServiceImpl implements FilterService {
                 .orElseThrow();
     }
 
+    @Transactional
     @Override
     public Optional<FilterReadDto> patch(Long id, FilterEditDto filter) {
         return filterRepository.findById(id)
@@ -73,6 +77,7 @@ public class FilterServiceImpl implements FilterService {
                 .map(filterReadMapper::map);
     }
 
+    @Transactional
     @Override
     public boolean delete(Long id) {
         return filterRepository.findById(id)
@@ -84,6 +89,7 @@ public class FilterServiceImpl implements FilterService {
                 .orElse(false);
     }
 
+    @Transactional
     @Override
     public boolean deleteByNameAndUserId(String name, Long userId) {
         return filterRepository.findByNameAndUserId(name, userId)
