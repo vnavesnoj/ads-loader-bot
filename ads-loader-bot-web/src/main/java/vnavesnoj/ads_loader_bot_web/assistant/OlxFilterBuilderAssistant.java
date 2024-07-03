@@ -49,7 +49,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilder(FilterBuilderReadDto filterBuilder, Long chatId, Locale locale) {
-        return this.getFilterBuilderMessage(chatId, locale, filterBuilder);
+        return this.getFilterBuilderMessage(chatId, locale, filterBuilder, null);
     }
 
     @Override
@@ -62,12 +62,13 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .map(pattern -> new FilterBuilderCreateDto(pattern, spotId, userId))
                 .map(filterBuilderService::create)
                 .orElseThrow(RuntimeException::new);
-        return getFilterBuilderMessage(chatId, locale, createdBuilder);
+        final var header = messageSource.getMessage("bot.create.filter-builder-created", null, locale) + "\n\n";
+        return getFilterBuilderMessage(chatId, locale, createdBuilder, header);
     }
 
     @NonNull
     @SneakyThrows(JsonProcessingException.class)
-    private SendMessage getFilterBuilderMessage(Long chatId, Locale locale, FilterBuilderReadDto filterBuilder) {
+    private SendMessage getFilterBuilderMessage(Long chatId, Locale locale, FilterBuilderReadDto filterBuilder, String header) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
 
         final String descriptionPatterns = pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
@@ -91,7 +92,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
                 : Arrays.toString(pattern.getRegionNames());
 
-        final String message = messageSource.getMessage("bot.create.filter-builder-created", null, locale) + "\n\n" +
+        final String message = header == null ? "" : header +
                 messageSource.getMessage("bot.filter.info.platform.formatted", new Object[]{filterBuilder.getSpot().getPlatform().getDomain()}, locale) + '\n' +
                 messageSource.getMessage("bot.filter.info.category.formatted", new Object[]{filterBuilder.getSpot().getName()}, locale) + '\n' +
                 messageSource.getMessage("bot.create.fill-in-the-details", null, locale) + ':';
