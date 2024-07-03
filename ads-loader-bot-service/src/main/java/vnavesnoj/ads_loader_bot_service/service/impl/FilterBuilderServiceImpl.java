@@ -47,6 +47,17 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    public Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input) {
+        return filterBuilderRepository.findById(id)
+                .map(item -> {
+                    item.setCurrentInput(input);
+                    return item;
+                })
+                .map(filterBuilderRepository::saveAndFlush)
+                .map(filterBuilderReadMapper::map);
+    }
+
+    @Override
     public Optional<FilterBuilderReadDto> findByUserId(Long userId) {
         return filterBuilderRepository.findByUserId(userId)
                 .map(filterBuilderReadMapper::map);

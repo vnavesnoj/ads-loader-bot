@@ -17,5 +17,7 @@ public interface FilterBuilderService {
 
     FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder);
 
+    Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input);
+
     boolean deleteByUserId(Long userId);
 }

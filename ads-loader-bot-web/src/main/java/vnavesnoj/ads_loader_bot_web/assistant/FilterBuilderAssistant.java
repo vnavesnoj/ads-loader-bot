@@ -16,4 +16,6 @@ public interface FilterBuilderAssistant extends Assistant {
     BaseRequest<SendMessage, SendResponse> getCurrentFilterBuilder(FilterBuilderReadDto filterBuilder, Long chatId, Locale locale);
 
     BaseRequest<SendMessage, SendResponse> createNewFilterBuilder(Long userId, Long chatId, Integer spotId, Locale locale);
+
+    BaseRequest<SendMessage, SendResponse> createInputRequest(FilterBuilderReadDto filterBuilder, String inputField, Long chatId, Locale locale);
 }

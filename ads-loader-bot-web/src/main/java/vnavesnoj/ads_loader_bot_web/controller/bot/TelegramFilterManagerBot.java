@@ -83,6 +83,11 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
         return new SendMessage(chat.id(), message);
     }
 
+    @MessageRequest("/null")
+    public BaseRequest<SendMessage, SendResponse> onNull(User user, Chat chat) {
+        return null;
+    }
+
     @MessageRequest("/hello")
     public BaseRequest<SendMessage, SendResponse> hello(User user, Chat chat) {
         return new SendMessage(chat.id(), "Hello, " + user.firstName() + "!");
@@ -151,6 +156,18 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 .map(UserReadDto::getChatState)
                 .map(chatStateFactory::getChatStateByName)
                 .map(item -> item.onBuilder(user, chat))
+                .orElseGet(() -> this.userNotRegistered(user, chat));
+    }
+
+    @BotRequest(value = "/input {fbId:[\\d]+} {input:[\\S]+}", type = MessageType.CALLBACK_QUERY)
+    public BaseRequest<SendMessage, SendResponse> onChooseInput(User user,
+                                                                Chat chat,
+                                                                @BotPathVariable("fbId") Long filterBuilderId,
+                                                                @BotPathVariable("input") String input) {
+        return userService.findById(user.id())
+                .map(UserReadDto::getChatState)
+                .map(chatStateFactory::getChatStateByName)
+                .map(item -> item.onChooseInput(user, chat, filterBuilderId, input))
                 .orElseGet(() -> this.userNotRegistered(user, chat));
     }
 

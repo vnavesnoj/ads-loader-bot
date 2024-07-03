@@ -26,5 +26,7 @@ public interface ChatState {
 
     BaseRequest<SendMessage, SendResponse> onChooseSpot(User user, Chat chat, Integer spotId);
 
+    BaseRequest<SendMessage, SendResponse> onChooseInput(User user, Chat chat, Long filterBuilderId, String input);
+
     ChatStateEnum getName();
 }

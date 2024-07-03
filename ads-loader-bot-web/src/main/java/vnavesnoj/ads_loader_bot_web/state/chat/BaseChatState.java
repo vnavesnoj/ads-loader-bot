@@ -147,11 +147,26 @@ public abstract class BaseChatState implements ChatState {
         if (maybeSpot.isEmpty()) {
             return writeSpotNotExists(chat, locale);
         }
-        //TODO
         final var message = filterBuilderAssistantFactory.getAssistant(maybeSpot.get().getAnalyzer())
                 .createNewFilterBuilder(user.id(), chat.id(), spotId, locale);
         userService.updateChatState(user.id(), ChatStateEnum.BUILDER_INFO);
         return message;
+    }
+
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onChooseInput(User user, Chat chat, Long filterBuilderId, String input) {
+        final var locale = Locale.of(user.languageCode());
+        //TODO
+        return filterBuilderService.findById(filterBuilderId)
+                .filter(item -> user.id().equals(item.getUser().getId()))
+                .map(item -> {
+                    final var response = filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
+                            .createInputRequest(item, input, chat.id(), locale);
+                    userService.updateChatState(user.id(), ChatStateEnum.BUILDER_INPUT);
+                    filterBuilderService.updateCurrentInput(item.getId(), input);
+                    return response;
+                })
+                .orElse(null);
     }
 
     private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {
