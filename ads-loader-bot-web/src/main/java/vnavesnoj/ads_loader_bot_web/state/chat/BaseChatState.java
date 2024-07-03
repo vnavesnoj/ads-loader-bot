@@ -130,7 +130,7 @@ public abstract class BaseChatState implements ChatState {
                 .forEach(keyboard::addRow);
         final var message = messageSource.getMessage("bot.create.search-platform", new Object[]{categoryDto.getPlatform().getDomain()}, locale) +
                 '\n' +
-                messageSource.getMessage("bot.category", new Object[]{categoryDto.getName()}, locale) +
+                messageSource.getMessage("bot.filter.info.category", new Object[]{categoryDto.getName()}, locale) +
                 '\n' +
                 messageSource.getMessage("bot.create.choose-spot", null, locale);
         return new SendMessage(chat.id(), message)

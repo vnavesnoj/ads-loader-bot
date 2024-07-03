@@ -2,6 +2,7 @@ package vnavesnoj.ads_loader_bot_common.pojo;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 import vnavesnoj.ads_loader_bot_common.constant.CurrencyCode;
 import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 
@@ -10,6 +11,7 @@ import vnavesnoj.ads_loader_bot_common.constant.PriceType;
  * @mail vnavesnoj@gmail.com
  */
 @Data
+@FieldNameConstants
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
