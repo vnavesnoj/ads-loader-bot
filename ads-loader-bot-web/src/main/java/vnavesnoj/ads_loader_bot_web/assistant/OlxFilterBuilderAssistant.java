@@ -74,7 +74,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         return switch (inputField) {
             case OlxDefaultPattern.Fields.descriptionPatterns ->
                     onChooseInputDescriptionPatterns(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(chatId, locale);
+            case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(chatId, locale);
             case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(chatId, locale);
             case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(chatId, locale);
@@ -106,8 +106,40 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .replyMarkup(keyboard);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(OlxDefaultPattern pattern, Long chatId, Locale locale) {
+        final String priceType = pattern.getPriceType() == null
+                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
+                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
+        final var message = messageSource.getMessage(
+                "bot.create.input.price-type.formatted",
+                new Object[]{priceType},
+                locale
+        );
+        final var freeTypeButton = new InlineKeyboardButton(
+                messageSource.getMessage(PriceType.FREE.getMessageSource(), null, locale)
+        ).callbackData(PriceType.FREE.name());
+        final var exchangeTypeButton = new InlineKeyboardButton(
+                messageSource.getMessage(PriceType.EXCHANGE.getMessageSource(), null, locale)
+        ).callbackData(PriceType.EXCHANGE.name());
+        final var paidTypeButton = new InlineKeyboardButton(
+                messageSource.getMessage(PriceType.PAID.getMessageSource(), null, locale)
+        ).callbackData(PriceType.PAID.name());
+        final var allTypeButton = new InlineKeyboardButton(
+                messageSource.getMessage(PriceType.ALL.getMessageSource(), null, locale)
+        ).callbackData(PriceType.ALL.name());
+        final var helpButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.help", null, locale)
+        ).callbackData("/help " + Fields.priceType);
+        final var backButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.back", null, locale)
+        ).callbackData("/builder");
+        final var keyboard = new InlineKeyboardMarkup()
+                .addRow(freeTypeButton, exchangeTypeButton, paidTypeButton)
+                .addRow(allTypeButton)
+                .addRow(helpButton, backButton);
+        return new SendMessage(chatId, message)
+                .parseMode(ParseMode.Markdown)
+                .replyMarkup(keyboard);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(Long chatId, Locale locale) {
