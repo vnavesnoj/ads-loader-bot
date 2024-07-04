@@ -37,6 +37,12 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    public Optional<FilterBuilderReadDto> findByIdAndUserId(Long id, Long userId) {
+        return filterBuilderRepository.findByIdAndUserId(id, userId)
+                .map(filterBuilderReadMapper::map);
+    }
+
+    @Override
     @Transactional
     public FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder) {
         return Optional.ofNullable(filterBuilder)

@@ -15,6 +15,8 @@ public interface FilterBuilderService {
 
     Optional<FilterBuilderReadDto> findByUserId(Long userId);
 
+    Optional<FilterBuilderReadDto> findByIdAndUserId(Long id, Long userId);
+
     FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder);
 
     Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input);

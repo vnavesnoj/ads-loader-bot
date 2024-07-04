@@ -23,6 +23,7 @@ import vnavesnoj.ads_loader_bot_service.factory.AnalyzerFactory;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
+import vnavesnoj.ads_loader_bot_web.exception.FilterBuilderNotFoundException;
 import vnavesnoj.ads_loader_bot_web.state.chat.ChatStateFactory;
 
 import java.util.Locale;
@@ -164,11 +165,16 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                                                                 Chat chat,
                                                                 @BotPathVariable("fbId") Long filterBuilderId,
                                                                 @BotPathVariable("input") String input) {
-        return userService.findById(user.id())
+        final var optionalChatState = userService.findById(user.id())
                 .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onChooseInput(user, chat, filterBuilderId, input))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+                .map(chatStateFactory::getChatStateByName);
+        try {
+            return optionalChatState
+                    .map(item -> item.onChooseInput(user, chat, filterBuilderId, input))
+                    .orElseGet(() -> this.userNotRegistered(user, chat));
+        } catch (FilterBuilderNotFoundException e) {
+            return null;
+        }
     }
 
     private BaseRequest<SendMessage, SendResponse> userNotRegistered(User user, Chat chat) {

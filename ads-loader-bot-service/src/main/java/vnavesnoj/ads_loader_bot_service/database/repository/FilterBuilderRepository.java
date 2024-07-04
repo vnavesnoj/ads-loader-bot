@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface FilterBuilderRepository extends JpaRepository<FilterBuilder, Long> {
 
     Optional<FilterBuilder> findByUserId(Long userId);
+
+    Optional<FilterBuilder> findByIdAndUserId(Long id, Long userId);
 }

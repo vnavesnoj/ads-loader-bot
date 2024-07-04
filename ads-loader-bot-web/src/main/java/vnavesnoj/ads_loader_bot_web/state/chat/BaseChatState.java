@@ -16,6 +16,7 @@ import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
+import vnavesnoj.ads_loader_bot_web.exception.FilterBuilderNotFoundException;
 import vnavesnoj.ads_loader_bot_web.factory.builderassistant.FilterBuilderAssistantFactory;
 
 import java.util.Arrays;
@@ -156,9 +157,7 @@ public abstract class BaseChatState implements ChatState {
     @Override
     public BaseRequest<SendMessage, SendResponse> onChooseInput(User user, Chat chat, Long filterBuilderId, String input) {
         final var locale = Locale.of(user.languageCode());
-        //TODO
-        return filterBuilderService.findById(filterBuilderId)
-                .filter(item -> user.id().equals(item.getUser().getId()))
+        return filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())
                 .map(item -> {
                     final var response = filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
                             .createInputRequest(item, input, chat.id(), locale);
@@ -166,7 +165,9 @@ public abstract class BaseChatState implements ChatState {
                     filterBuilderService.updateCurrentInput(item.getId(), input);
                     return response;
                 })
-                .orElse(null);
+                .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with id = " + filterBuilderId
+                        + " and FilterBuilder.user.id = " + user.id()
+                        + " does not exist"));
     }
 
     private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {
