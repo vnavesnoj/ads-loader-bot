@@ -75,7 +75,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             case OlxDefaultPattern.Fields.descriptionPatterns ->
                     onChooseInputDescriptionPatterns(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(chatId, locale);
+            case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(chatId, locale);
             case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(chatId, locale);
             case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(chatId, locale);
@@ -142,8 +142,24 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .replyMarkup(keyboard);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(OlxDefaultPattern pattern,
+                                                                         Long chatId,
+                                                                         Locale locale) {
+        final var message = messageSource.getMessage(
+                "bot.create.input.min-price.formatted",
+                new Object[]{pattern.getMinPrice(), pattern.getCurrencyCode()},
+                locale
+        );
+        final var helpButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.help", null, locale)
+        ).callbackData("/help " + Fields.minPrice);
+        final var backButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.back", null, locale)
+        ).callbackData("/builder");
+        final var keyboard = new InlineKeyboardMarkup().addRow(helpButton, backButton);
+        return new SendMessage(chatId, message)
+                .replyMarkup(keyboard)
+                .parseMode(ParseMode.Markdown);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(Long chatId, Locale locale) {
