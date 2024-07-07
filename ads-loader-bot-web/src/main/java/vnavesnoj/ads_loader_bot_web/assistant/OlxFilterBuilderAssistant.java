@@ -77,7 +77,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(chatId, locale);
+            case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(chatId, locale);
             case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(chatId, locale);
             default ->
@@ -180,8 +180,29 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(OlxDefaultPattern pattern,
+                                                                             Long chatId,
+                                                                             Locale locale) {
+        final var message = messageSource.getMessage(
+                "bot.create.input.choose-currency-code.formatted",
+                new Object[]{pattern.getCurrencyCode().name()},
+                locale
+        );
+        final var codeButtons = Arrays.stream(CurrencyCode.values())
+                .map(item -> new InlineKeyboardButton(item.name()).callbackData(item.name()))
+                .toArray(InlineKeyboardButton[]::new);
+        final var helpButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.help", null, locale)
+        ).callbackData("/help " + Fields.currencyCode);
+        final var backButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.back", null, locale)
+        ).callbackData("/builder");
+        final var keyboard = new InlineKeyboardMarkup()
+                .addRow(codeButtons)
+                .addRow(helpButton, backButton);
+        return new SendMessage(chatId, message)
+                .replyMarkup(keyboard)
+                .parseMode(ParseMode.Markdown);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(Long chatId, Locale locale) {
