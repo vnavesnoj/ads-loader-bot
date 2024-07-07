@@ -76,7 +76,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                     onChooseInputDescriptionPatterns(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(chatId, locale);
+            case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(chatId, locale);
             case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(chatId, locale);
             case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(chatId, locale);
@@ -86,9 +86,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern, Long chatId, Locale locale) {
-        final String descriptionPatterns = pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getDescriptionPatterns());
+        final String descriptionPatterns = getDescriptionPatterns(locale, pattern);
         final var message = messageSource.getMessage(
                 "bot.create.input.description-patterns.formatted",
                 new Object[]{descriptionPatterns},
@@ -107,9 +105,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(OlxDefaultPattern pattern, Long chatId, Locale locale) {
-        final String priceType = pattern.getPriceType() == null
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
+        final String priceType = getPriceType(locale, pattern);
         final var message = messageSource.getMessage(
                 "bot.create.input.price-type.formatted",
                 new Object[]{priceType},
@@ -145,9 +141,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(OlxDefaultPattern pattern,
                                                                          Long chatId,
                                                                          Locale locale) {
+        final var minPrice = getMinPrice(pattern);
         final var message = messageSource.getMessage(
                 "bot.create.input.min-price.formatted",
-                new Object[]{pattern.getMinPrice(), pattern.getCurrencyCode()},
+                new Object[]{minPrice, pattern.getCurrencyCode()},
                 locale
         );
         final var helpButton = new InlineKeyboardButton(
@@ -162,8 +159,25 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(OlxDefaultPattern pattern,
+                                                                         Long chatId,
+                                                                         Locale locale) {
+        final var maxPrice = getMaxPrice(locale, pattern);
+        final var message = messageSource.getMessage(
+                "bot.create.input.max-price.formatted",
+                new Object[]{maxPrice, pattern.getCurrencyCode()},
+                locale
+        );
+        final var helpButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.help", null, locale)
+        ).callbackData("/help " + Fields.maxPrice);
+        final var backButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.back", null, locale)
+        ).callbackData("/builder");
+        final var keyboard = new InlineKeyboardMarkup().addRow(helpButton, backButton);
+        return new SendMessage(chatId, message)
+                .replyMarkup(keyboard)
+                .parseMode(ParseMode.Markdown);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(Long chatId, Locale locale) {
@@ -183,26 +197,12 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     private SendMessage getFilterBuilderMessage(Long chatId, Locale locale, FilterBuilderReadDto filterBuilder, String header) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
 
-        final String descriptionPatterns = pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getDescriptionPatterns());
-
-        final String priceType = pattern.getPriceType() == null
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
-
-        final var minPrice = pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
-        final var maxPrice = pattern.getMaxPrice() == null
-                ? messageSource.getMessage("bot.filter.info.max", null, locale)
-                : pattern.getMaxPrice();
-
-        final String city = pattern.getCityNames() == null || pattern.getCityNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getCityNames());
-
-        final String region = pattern.getRegionNames() == null || pattern.getRegionNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getRegionNames());
+        final String descriptionPatterns = getDescriptionPatterns(locale, pattern);
+        final String priceType = getPriceType(locale, pattern);
+        final long minPrice = getMinPrice(pattern);
+        final String maxPrice = getMaxPrice(locale, pattern);
+        final String city = getCity(locale, pattern);
+        final String region = getRegion(locale, pattern);
 
         final String message = (header == null ? "" : header) +
                 messageSource.getMessage("bot.filter.info.platform.formatted", new Object[]{filterBuilder.getSpot().getPlatform().getDomain()}, locale) + '\n' +
@@ -237,5 +237,44 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         return new SendMessage(chatId, message)
                 .parseMode(ParseMode.Markdown)
                 .replyMarkup(keybord);
+    }
+
+    @NonNull
+    private String getRegion(Locale locale, OlxDefaultPattern pattern) {
+        return pattern.getRegionNames() == null || pattern.getRegionNames().length == 0
+                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
+                : Arrays.toString(pattern.getRegionNames());
+    }
+
+    @NonNull
+    private String getCity(Locale locale, OlxDefaultPattern pattern) {
+        return pattern.getCityNames() == null || pattern.getCityNames().length == 0
+                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
+                : Arrays.toString(pattern.getCityNames());
+    }
+
+    @NonNull
+    private String getPriceType(Locale locale, OlxDefaultPattern pattern) {
+        return pattern.getPriceType() == null
+                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
+                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
+    }
+
+    @NonNull
+    private String getDescriptionPatterns(Locale locale, OlxDefaultPattern pattern) {
+        return pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
+                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
+                : Arrays.toString(pattern.getDescriptionPatterns());
+    }
+
+    @NonNull
+    private String getMaxPrice(Locale locale, OlxDefaultPattern pattern) {
+        return pattern.getMaxPrice() == null
+                ? messageSource.getMessage("bot.filter.info.max", null, locale)
+                : pattern.getMaxPrice().toString();
+    }
+
+    private Long getMinPrice(OlxDefaultPattern pattern) {
+        return pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
     }
 }
