@@ -142,9 +142,14 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                                                                          Long chatId,
                                                                          Locale locale) {
         final var minPrice = getMinPrice(pattern);
+        final var currencyCode = getCurrencyCode(locale, pattern, '(' + messageSource.getMessage(
+                "bot.filter.info.currency-code-not-indicated",
+                null,
+                locale
+        ) + ')');
         final var message = messageSource.getMessage(
                 "bot.create.input.min-price.formatted",
-                new Object[]{minPrice, pattern.getCurrencyCode()},
+                new Object[]{minPrice, currencyCode},
                 locale
         );
         final var helpButton = new InlineKeyboardButton(
@@ -163,9 +168,14 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                                                                          Long chatId,
                                                                          Locale locale) {
         final var maxPrice = getMaxPrice(locale, pattern);
+        final var currencyCode = getCurrencyCode(locale, pattern, '(' + messageSource.getMessage(
+                "bot.filter.info.currency-code-not-indicated",
+                null,
+                locale
+        ) + ')');
         final var message = messageSource.getMessage(
                 "bot.create.input.max-price.formatted",
-                new Object[]{maxPrice, pattern.getCurrencyCode()},
+                new Object[]{maxPrice, currencyCode},
                 locale
         );
         final var helpButton = new InlineKeyboardButton(
@@ -183,9 +193,14 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(OlxDefaultPattern pattern,
                                                                              Long chatId,
                                                                              Locale locale) {
+        final var currencyCode = getCurrencyCode(locale, pattern, messageSource.getMessage(
+                "bot.filter.info.not-indicated",
+                null,
+                locale
+        ));
         final var message = messageSource.getMessage(
                 "bot.create.input.choose-currency-code.formatted",
-                new Object[]{pattern.getCurrencyCode().name()},
+                new Object[]{currencyCode},
                 locale
         );
         final var codeButtons = Arrays.stream(CurrencyCode.values())
@@ -222,6 +237,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         final String priceType = getPriceType(locale, pattern);
         final long minPrice = getMinPrice(pattern);
         final String maxPrice = getMaxPrice(locale, pattern);
+        final String currencyCode = getCurrencyCode(
+                locale,
+                pattern,
+                messageSource.getMessage("bot.filter.info.currency-code", null, locale));
         final String city = getCity(locale, pattern);
         final String region = getRegion(locale, pattern);
 
@@ -242,7 +261,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 messageSource.getMessage("bot.filter.info.max-price", new Object[]{maxPrice}, locale)
         ).callbackData("/input " + filterBuilder.getId() + " " + Fields.maxPrice);
         final var currencyCodeButton = new InlineKeyboardButton(
-                pattern.getCurrencyCode().name()
+                currencyCode
         ).callbackData("/input " + filterBuilder.getId() + " " + Fields.currencyCode);
         final var cityButton = new InlineKeyboardButton(
                 messageSource.getMessage("bot.filter.info.city", new Object[]{city}, locale)
@@ -297,5 +316,11 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
 
     private Long getMinPrice(OlxDefaultPattern pattern) {
         return pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
+    }
+
+    private String getCurrencyCode(Locale locale, OlxDefaultPattern pattern, String defaultMessage) {
+        return pattern.getCurrencyCode() == null
+                ? defaultMessage
+                : pattern.getCurrencyCode().name();
     }
 }
