@@ -18,12 +18,8 @@ import org.springframework.context.MessageSource;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
-import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
-import vnavesnoj.ads_loader_bot_service.factory.AnalyzerFactory;
-import vnavesnoj.ads_loader_bot_service.service.CategoryService;
-import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
-import vnavesnoj.ads_loader_bot_web.exception.FilterBuilderNotFoundException;
+import vnavesnoj.ads_loader_bot_web.handler.BotRequestHandler;
 import vnavesnoj.ads_loader_bot_web.state.chat.ChatStateFactory;
 
 import java.util.Locale;
@@ -39,27 +35,21 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
 
     private final String token;
     private final UserService userService;
-    private final CategoryService categoryService;
-    private final FilterBuilderService filterBuilderService;
-    private final AnalyzerFactory analyzerFactory;
     private final ChatStateFactory chatStateFactory;
+    private final BotRequestHandler botRequestHandler;
 
     private final MessageSource messageSource;
 
     public TelegramFilterManagerBot(@Value("${telegram.bot.filter-manager.token}")
                                     String token,
                                     UserService userService,
-                                    CategoryService categoryService,
-                                    FilterBuilderService filterBuilderService,
-                                    AnalyzerFactory analyzerFactory,
                                     ChatStateFactory chatStateFactory,
+                                    BotRequestHandler tgFilterBotRequestHandler,
                                     MessageSource messageSource) {
         this.token = token;
         this.userService = userService;
-        this.categoryService = categoryService;
-        this.filterBuilderService = filterBuilderService;
-        this.analyzerFactory = analyzerFactory;
         this.chatStateFactory = chatStateFactory;
+        this.botRequestHandler = tgFilterBotRequestHandler;
         this.messageSource = messageSource;
     }
 
@@ -73,6 +63,7 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
         return token;
     }
 
+    //TODO chatState.onStart()
     @BotRequest(value = "/start", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> start(User user, Chat chat) {
         userService.create(new UserCreateDto(user.id(), user.languageCode(), ChatStateEnum.START));
@@ -102,83 +93,81 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
 
     @BotRequest(value = "/create", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> create(User user, Chat chat) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onCreate(user, chat))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onCreate(user, chat)
+        );
     }
 
     @BotRequest(value = "/platform {platform:[\\S]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChoosePlatform(User user,
                                                                    Chat chat,
                                                                    @BotPathVariable("platform") String platform) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onChoosePlatform(user, chat, Platform.valueOf(platform)))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onChoosePlatform(user, chat, Platform.valueOf(platform))
+        );
     }
 
     @BotRequest(value = "/category {categoryId:[\\d]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChooseCategory(User user,
                                                                    Chat chat,
                                                                    @BotPathVariable("categoryId") Integer categoryId) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onChooseCategory(user, chat, categoryId))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onChooseCategory(user, chat, categoryId)
+        );
     }
 
     @BotRequest(value = "/spot {spotId:[\\d]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChooseSpot(User user,
                                                                Chat chat,
                                                                @BotPathVariable("spotId") Integer spotId) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onChooseSpot(user, chat, spotId))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onChooseSpot(user, chat, spotId)
+        );
     }
 
     @BotRequest(value = "/force-create", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> onForceCreate(User user, Chat chat) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onForceCreate(user, chat))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onForceCreate(user, chat)
+        );
     }
 
     @BotRequest(value = "/builder", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> onBuilder(User user, Chat chat) {
-        return userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName)
-                .map(item -> item.onBuilder(user, chat))
-                .orElseGet(() -> this.userNotRegistered(user, chat));
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onBuilder(user, chat)
+        );
     }
 
+    //TODO handle exception FilterBuilderNotFoundException
     @BotRequest(value = "/input {fbId:[\\d]+} {input:[\\S]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChooseInput(User user,
                                                                 Chat chat,
                                                                 @BotPathVariable("fbId") Long filterBuilderId,
                                                                 @BotPathVariable("input") String input) {
-        final var optionalChatState = userService.findById(user.id())
-                .map(UserReadDto::getChatState)
-                .map(chatStateFactory::getChatStateByName);
-        try {
-            return optionalChatState
-                    .map(item -> item.onChooseInput(user, chat, filterBuilderId, input))
-                    .orElseGet(() -> this.userNotRegistered(user, chat));
-        } catch (FilterBuilderNotFoundException e) {
-            return null;
-        }
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onChooseInput(user, chat, filterBuilderId, input)
+        );
     }
 
-    private BaseRequest<SendMessage, SendResponse> userNotRegistered(User user, Chat chat) {
-        final var message = messageSource.getMessage("bot.user-not-registered", null, Locale.of(user.languageCode()));
-        return new SendMessage(chat.id(), message);
+    @BotRequest(value = "{input:[\\s\\S]+}", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
+    public BaseRequest<SendMessage, SendResponse> onInput(User user,
+                                                          Chat chat,
+                                                          @BotPathVariable("input") String input) {
+        return null;
     }
 }
