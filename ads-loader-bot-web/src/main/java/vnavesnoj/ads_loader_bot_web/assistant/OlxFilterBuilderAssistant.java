@@ -79,7 +79,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(chatId, locale);
+            case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(pattern, chatId, locale);
             default ->
                     throw new UnknownInputFieldException("unknown input field '" + inputField + "' for create input request");
         };
@@ -234,8 +234,16 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(OlxDefaultPattern pattern, Long chatId, Locale locale) {
+        final var message = messageSource.getMessage(
+                "bot.create.input.region-patterns.formatted",
+                new Object[]{getRegion(locale, pattern)},
+                locale);
+        final var keyboard = new InlineKeyboardMarkup()
+                .addRow(getDefaultButtons(Fields.regionNames, locale));
+        return new SendMessage(chatId, message)
+                .replyMarkup(keyboard)
+                .parseMode(ParseMode.Markdown);
     }
 
     @NonNull
