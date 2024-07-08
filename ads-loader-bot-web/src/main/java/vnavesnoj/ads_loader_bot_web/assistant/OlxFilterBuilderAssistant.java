@@ -78,7 +78,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(chatId, locale);
+            case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(pattern, chatId, locale);
             case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(chatId, locale);
             default ->
                     throw new UnknownInputFieldException("unknown input field '" + inputField + "' for create input request");
@@ -220,8 +220,18 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(Long chatId, Locale locale) {
-        return null;
+    private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(OlxDefaultPattern pattern,
+                                                                          Long chatId,
+                                                                          Locale locale) {
+        final var message = messageSource.getMessage(
+                "bot.create.input.city-patterns.formatted",
+                new Object[]{getCity(locale, pattern)},
+                locale
+        );
+        final var keyboard = new InlineKeyboardMarkup().addRow(getDefaultButtons(Fields.cityNames, locale));
+        return new SendMessage(chatId, message)
+                .replyMarkup(keyboard)
+                .parseMode(ParseMode.Markdown);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(Long chatId, Locale locale) {
@@ -314,13 +324,26 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                 : pattern.getMaxPrice().toString();
     }
 
+    @NonNull
     private Long getMinPrice(OlxDefaultPattern pattern) {
         return pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
     }
 
+    @NonNull
     private String getCurrencyCode(Locale locale, OlxDefaultPattern pattern, String defaultMessage) {
         return pattern.getCurrencyCode() == null
                 ? defaultMessage
                 : pattern.getCurrencyCode().name();
+    }
+
+    @NonNull
+    private InlineKeyboardButton[] getDefaultButtons(String patternField, Locale locale) {
+        final var helpButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.help", null, locale)
+        ).callbackData("/help " + patternField);
+        final var backButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.back", null, locale)
+        ).callbackData("/builder");
+        return new InlineKeyboardButton[]{helpButton, backButton};
     }
 }
