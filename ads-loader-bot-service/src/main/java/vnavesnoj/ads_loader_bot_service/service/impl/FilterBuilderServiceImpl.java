@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderRepository;
-import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
-import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
-import vnavesnoj.ads_loader_bot_service.dto.FilterBuilderCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
@@ -24,11 +23,10 @@ import java.util.Optional;
 public class FilterBuilderServiceImpl implements FilterBuilderService {
 
     private final FilterBuilderRepository filterBuilderRepository;
-    private final UserRepository userRepository;
-    private final SpotRepository spotRepository;
 
     private final Mapper<FilterBuilder, FilterBuilderReadDto> filterBuilderReadMapper;
     private final Mapper<FilterBuilderCreateDto, FilterBuilder> filterBuilderCreateMapper;
+    private final Mapper<FilterBuilderEditDto, FilterBuilder> filterBuilderEditMapper;
 
     @Override
     public Optional<FilterBuilderReadDto> findById(Long id) {
@@ -59,6 +57,15 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
                     item.setCurrentInput(input);
                     return item;
                 })
+                .map(filterBuilderRepository::saveAndFlush)
+                .map(filterBuilderReadMapper::map);
+    }
+
+    @Override
+    @Transactional
+    public Optional<FilterBuilderReadDto> update(Long id, FilterBuilderEditDto filterBuilder) {
+        return filterBuilderRepository.findById(id)
+                .map(item -> filterBuilderEditMapper.map(filterBuilder, item))
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map);
     }
