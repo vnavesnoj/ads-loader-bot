@@ -62,6 +62,17 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    public Optional<FilterBuilderReadDto> updatePattern(Long id, String pattern) {
+        return filterBuilderRepository.findById(id)
+                .map(item -> {
+                    item.setPattern(pattern);
+                    return item;
+                })
+                .map(filterBuilderRepository::saveAndFlush)
+                .map(filterBuilderReadMapper::map);
+    }
+
+    @Override
     @Transactional
     public Optional<FilterBuilderReadDto> update(Long id, FilterBuilderEditDto filterBuilder) {
         return filterBuilderRepository.findById(id)
