@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import jakarta.validation.Validator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -18,14 +19,16 @@ import vnavesnoj.ads_loader_bot_common.constant.CurrencyCode;
 import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern.Fields;
-import vnavesnoj.ads_loader_bot_service.dto.FilterBuilderCreateDto;
+import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_web.exception.OlxDefaultPatternValidationException;
 import vnavesnoj.ads_loader_bot_web.exception.UnknownInputFieldException;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author vnavesnoj
@@ -38,8 +41,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     private final FilterBuilderService filterBuilderService;
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     private final AnalyzerEnum analyzer = AnalyzerEnum.OLX_UA_DEFAULT;
+    private static final String OLX_DEFAULT_PATTERN_DELIMITER = ",";
 
     @Override
     public AnalyzerEnum getAnalyzer() {
@@ -89,6 +94,75 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             default ->
                     throw new UnknownInputFieldException("unknown input field '" + inputField + "' for create input request");
         };
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    @Override
+    public String handleInputRequest(FilterBuilderReadDto filterBuilder, String input) {
+        final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
+        final var currentInput = filterBuilder.getCurrentInput();
+        if (currentInput == null) {
+            throw new NullPointerException("FilterBuilder with "
+                    + FilterBuilderReadDto.Fields.id + " = "
+                    + filterBuilder.getId() + " has null "
+                    + FilterBuilderReadDto.Fields.currentInput);
+        }
+        return switch (currentInput) {
+            case OlxDefaultPattern.Fields.descriptionPatterns ->
+                    onInputDescriptionPatterns(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.priceType -> onInputPriceType(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.minPrice -> onInputMinPrice(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.maxPrice -> onInputMaxPrice(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.currencyCode -> onInputCurrencyCode(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.cityNames -> onInputCityNames(filterBuilder.getId(), pattern, input);
+            case OlxDefaultPattern.Fields.regionNames -> onInputRegionNames(filterBuilder.getId(), pattern, input);
+            default ->
+                    throw new UnknownInputFieldException("unknown input field '" + currentInput + "' for handle input request." +
+                            " FilterBuilder." + FilterBuilderReadDto.Fields.id + " = " + filterBuilder.getId());
+        };
+    }
+
+    private String onInputRegionNames(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    private String onInputCityNames(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    private String onInputCurrencyCode(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    private String onInputMaxPrice(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    private String onInputMinPrice(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    private String onInputPriceType(Long id, OlxDefaultPattern pattern, String input) {
+        return null;
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    private String onInputDescriptionPatterns(Long id, OlxDefaultPattern pattern, @NonNull String input) {
+        final var description = Optional.of(input)
+                .map(item -> item.split(OLX_DEFAULT_PATTERN_DELIMITER))
+                .map(item -> Stream.of(item)
+                        .map(String::strip)
+                        .toArray(String[]::new))
+                .orElseThrow();
+        final var errors = validator.validateValue(OlxDefaultPattern.class, Fields.descriptionPatterns, description);
+
+        if (!errors.isEmpty()) {
+            throw new OlxDefaultPatternValidationException(errors);
+        }
+        pattern.setDescriptionPatterns(description);
+        final var jsonPattern = objectMapper.writeValueAsString(pattern);
+        filterBuilderService.updatePattern(id, jsonPattern);
+        return Arrays.toString(description);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern,

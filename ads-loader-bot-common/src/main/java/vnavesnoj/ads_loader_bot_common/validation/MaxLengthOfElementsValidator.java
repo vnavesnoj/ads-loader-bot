@@ -16,7 +16,8 @@ public class MaxLengthOfElementsValidator implements ConstraintValidator<MaxLeng
 
     @Override
     public boolean isValid(String[] value, ConstraintValidatorContext context) {
-        return Arrays.stream(value)
+        return value == null
+                || Arrays.stream(value)
                 .allMatch(item -> item.length() <= maxLength);
     }
 

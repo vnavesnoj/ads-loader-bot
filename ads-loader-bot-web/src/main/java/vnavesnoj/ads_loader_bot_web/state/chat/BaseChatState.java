@@ -17,6 +17,7 @@ import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
 import vnavesnoj.ads_loader_bot_web.exception.FilterBuilderNotFoundException;
+import vnavesnoj.ads_loader_bot_web.exception.InvalidChatStateMethod;
 import vnavesnoj.ads_loader_bot_web.factory.builderassistant.FilterBuilderAssistantFactory;
 
 import java.util.Arrays;
@@ -168,6 +169,11 @@ public abstract class BaseChatState implements ChatState {
                 .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with id = " + filterBuilderId
                         + " and FilterBuilder.user.id = " + user.id()
                         + " does not exist"));
+    }
+
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onInput(User user, Chat chat, String input) {
+        throw new InvalidChatStateMethod("method 'onInput' not supported by " + this.getClass().getName());
     }
 
     private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {

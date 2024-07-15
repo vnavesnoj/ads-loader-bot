@@ -151,7 +151,6 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
         );
     }
 
-    //TODO handle exception FilterBuilderNotFoundException
     @BotRequest(value = "/input {fbId:[\\d]+} {input:[\\S]+}", type = MessageType.CALLBACK_QUERY)
     public BaseRequest<SendMessage, SendResponse> onChooseInput(User user,
                                                                 Chat chat,
@@ -168,6 +167,10 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
     public BaseRequest<SendMessage, SendResponse> onInput(User user,
                                                           Chat chat,
                                                           @BotPathVariable("input") String input) {
-        return null;
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onInput(user, chat, input)
+        );
     }
 }

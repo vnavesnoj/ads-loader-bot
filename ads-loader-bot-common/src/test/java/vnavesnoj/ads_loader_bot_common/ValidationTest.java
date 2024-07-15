@@ -1,9 +1,8 @@
 package vnavesnoj.ads_loader_bot_common;
 
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.validation.DataBinder;
-import org.springframework.validation.Validator;
 import vnavesnoj.ads_loader_bot_common.annotation.IT;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 
@@ -20,13 +19,13 @@ public class ValidationTest {
     @Test
     void testValidation() {
         final var pattern = OlxDefaultPattern.builder()
-                .descriptionPatterns(new String[]{"123"})
+                .descriptionPatterns(new String[]{"1234567890123456789"})
                 .build();
-        final var dataBinder = new DataBinder(pattern);
-        dataBinder.setValidator(validator);
-        dataBinder.setAllowedFields(OlxDefaultPattern.Fields.descriptionPatterns);
-        dataBinder.validate();
-        final var bindingResult = dataBinder.getBindingResult();
+        final var errors = validator.validateValue(
+                OlxDefaultPattern.class,
+                OlxDefaultPattern.Fields.descriptionPatterns,
+                new String[]{"1234567890123456789"});
+        errors.forEach(error -> System.out.println(error.getMessage()));
         System.out.println();
     }
 }

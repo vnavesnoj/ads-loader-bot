@@ -51,6 +51,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    @Transactional
     public Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input) {
         return filterBuilderRepository.findById(id)
                 .map(item -> {
@@ -62,6 +63,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     }
 
     @Override
+    @Transactional
     public Optional<FilterBuilderReadDto> updatePattern(Long id, String pattern) {
         return filterBuilderRepository.findById(id)
                 .map(item -> {
