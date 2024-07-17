@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
@@ -13,6 +14,7 @@ import vnavesnoj.ads_loader_bot_web.exception.UserNotRegisteredException;
 import vnavesnoj.ads_loader_bot_web.state.chat.ChatState;
 import vnavesnoj.ads_loader_bot_web.state.chat.ChatStateFactory;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -33,6 +35,9 @@ public class TgFilterBotRequestHandler implements BotRequestHandler {
         try {
             final var actualUser = userService.findById(user.id())
                     .orElseThrow(UserNotRegisteredException::new);
+            Optional.ofNullable(actualUser.getLanguageCode())
+                    .map(Locale::of)
+                    .ifPresent(LocaleContextHolder::setLocale);
             return Optional.of(actualUser)
                     .map(UserReadDto::getChatState)
                     .map(chatStateFactory::getChatStateByName)

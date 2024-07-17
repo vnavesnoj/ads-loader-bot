@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.Getter;
 import lombok.NonNull;
+import org.springframework.context.MessageSource;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 
 import javax.validation.ValidationException;
@@ -48,7 +49,7 @@ public class OlxDefaultPatternValidationException extends ValidationException im
     }
 
     @Override
-    public BaseRequest<SendMessage, SendResponse> getResponseMessage(User user, Chat chat) {
+    public BaseRequest<SendMessage, SendResponse> getResponseMessage(User user, Chat chat, MessageSource messageSource) {
         final var message = errors.stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("\n"));

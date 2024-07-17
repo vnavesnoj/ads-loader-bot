@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.springframework.context.MessageSource;
 
 /**
  * @author vnavesnoj
@@ -12,5 +13,5 @@ import com.pengrad.telegrambot.response.SendResponse;
  */
 public interface BotResponseMessageException {
 
-    BaseRequest<SendMessage, SendResponse> getResponseMessage(User user, Chat chat);
+    BaseRequest<SendMessage, SendResponse> getResponseMessage(User user, Chat chat, MessageSource messageSource);
 }

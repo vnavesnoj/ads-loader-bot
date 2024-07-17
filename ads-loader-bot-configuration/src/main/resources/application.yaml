@@ -2,6 +2,8 @@ spring:
 
   application:
     name: ads-loader-bot-configuration
+    locale:
+      default: ua
   datasource:
     url: jdbc:postgresql://localhost:5432/ads-loader-bot-bd
     username: postgres

@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import vnavesnoj.ads_loader_bot_common.annotation.BotResponseMessage;
@@ -28,11 +29,10 @@ public class BotExceptionHandlerImpl implements BotExceptionHandler {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> handleException(User user, Chat chat, RuntimeException exception) {
-        final Locale locale = Locale.of(user.languageCode());
         if (exception instanceof BotResponseMessageException) {
-            return ((BotResponseMessageException) exception).getResponseMessage(user, chat);
+            return ((BotResponseMessageException) exception).getResponseMessage(user, chat, messageSource);
         }
-        return getMessageFromAnnotation(chat, exception, locale);
+        return getMessageFromAnnotation(chat, exception, LocaleContextHolder.getLocale());
     }
 
     @Nullable

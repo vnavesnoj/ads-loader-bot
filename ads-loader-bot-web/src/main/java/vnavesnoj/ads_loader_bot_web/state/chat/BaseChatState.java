@@ -8,7 +8,9 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
@@ -39,9 +41,14 @@ public abstract class BaseChatState implements ChatState {
     private final FilterBuilderAssistantFactory filterBuilderAssistantFactory;
     private final MessageSource messageSource;
 
+    @NotNull
+    protected static Locale getLocale() {
+        return LocaleContextHolder.getLocale();
+    }
+
     @Override
     public BaseRequest<SendMessage, SendResponse> onCreate(User user, Chat chat) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         if (filterBuilderService.findByUserId(user.id()).isPresent()) {
             return writeFilterBuilderExists(chat, locale);
         }
@@ -50,7 +57,7 @@ public abstract class BaseChatState implements ChatState {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> onBuilder(User user, Chat chat) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         return filterBuilderService.findByUserId(user.id())
                 .map(item -> {
                     final var message = filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
@@ -74,7 +81,7 @@ public abstract class BaseChatState implements ChatState {
     @Override
     public BaseRequest<SendMessage, SendResponse> onForceCreate(User user, Chat chat) {
         filterBuilderService.deleteByUserId(user.id());
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         final var buttons = Arrays.stream(Platform.values())
                 .map(item -> new InlineKeyboardButton(item.getDomain()).callbackData("/platform " + item.name()))
                 .toArray(InlineKeyboardButton[]::new);
@@ -88,7 +95,7 @@ public abstract class BaseChatState implements ChatState {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> onChoosePlatform(User user, Chat chat, Platform platform) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         if (filterBuilderService.findByUserId(user.id()).isPresent()) {
             return writeFilterBuilderExists(chat, locale);
         }
@@ -111,7 +118,7 @@ public abstract class BaseChatState implements ChatState {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> onChooseCategory(User user, Chat chat, Integer categoryId) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         if (filterBuilderService.findByUserId(user.id()).isPresent()) {
             return writeFilterBuilderExists(chat, locale);
         }
@@ -141,7 +148,7 @@ public abstract class BaseChatState implements ChatState {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> onChooseSpot(User user, Chat chat, Integer spotId) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         if (filterBuilderService.findByUserId(user.id()).isPresent()) {
             return writeFilterBuilderExists(chat, locale);
         }
@@ -157,7 +164,7 @@ public abstract class BaseChatState implements ChatState {
 
     @Override
     public BaseRequest<SendMessage, SendResponse> onChooseInput(User user, Chat chat, Long filterBuilderId, String input) {
-        final var locale = Locale.of(user.languageCode());
+        final var locale = getLocale();
         return filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())
                 .map(item -> {
                     final var response = filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
