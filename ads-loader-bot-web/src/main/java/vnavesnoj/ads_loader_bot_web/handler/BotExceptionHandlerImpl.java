@@ -5,11 +5,13 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import vnavesnoj.ads_loader_bot_common.annotation.BotResponseMessage;
+import vnavesnoj.ads_loader_bot_web.exception.BotResponseMessageException;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -27,6 +29,14 @@ public class BotExceptionHandlerImpl implements BotExceptionHandler {
     @Override
     public BaseRequest<SendMessage, SendResponse> handleException(User user, Chat chat, RuntimeException exception) {
         final Locale locale = Locale.of(user.languageCode());
+        if (exception instanceof BotResponseMessageException) {
+            return ((BotResponseMessageException) exception).getResponseMessage(user, chat);
+        }
+        return getMessageFromAnnotation(chat, exception, locale);
+    }
+
+    @Nullable
+    private BaseRequest<SendMessage, SendResponse> getMessageFromAnnotation(Chat chat, RuntimeException exception, Locale locale) {
         final var annotation = Optional.ofNullable(exception.getClass().getAnnotation(BotResponseMessage.class))
                 .orElseThrow(() -> exception);
         return Optional.of(annotation)
