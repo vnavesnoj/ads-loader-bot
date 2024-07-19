@@ -23,6 +23,7 @@ import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_web.exception.OlxDefaultPatternValidationException;
+import vnavesnoj.ads_loader_bot_web.exception.PriceTypeNotExistsException;
 import vnavesnoj.ads_loader_bot_web.exception.UnknownInputFieldException;
 
 import java.util.Arrays;
@@ -143,10 +144,16 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputPriceType(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var priceType = Arrays.stream(PriceType.values())
+                .filter(item -> item.name().equalsIgnoreCase(input))
+                .findFirst()
+                .orElseThrow(PriceTypeNotExistsException::new);
+        validateField(Fields.priceType, priceType);
+        pattern.setPriceType(priceType);
+        updateFilterBuilderPattern(id, pattern);
+        return priceType.name();
     }
 
-    @SneakyThrows(JsonProcessingException.class)
     private String onInputDescriptionPatterns(Long id, OlxDefaultPattern pattern, @NonNull String input) {
         final var description = Optional.of(input)
                 .map(item -> item.split(OLX_DEFAULT_PATTERN_DELIMITER))
@@ -154,15 +161,23 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                         .map(String::strip)
                         .toArray(String[]::new))
                 .orElseThrow();
-        final var errors = validator.validateValue(OlxDefaultPattern.class, Fields.descriptionPatterns, description);
+        validateField(Fields.descriptionPatterns, description);
+        pattern.setDescriptionPatterns(description);
+        updateFilterBuilderPattern(id, pattern);
+        return Arrays.toString(description);
+    }
 
+    @SneakyThrows(JsonProcessingException.class)
+    private void updateFilterBuilderPattern(Long id, OlxDefaultPattern pattern) {
+        final var jsonPattern = objectMapper.writeValueAsString(pattern);
+        filterBuilderService.updatePattern(id, jsonPattern);
+    }
+
+    private void validateField(String field, Object value) {
+        final var errors = validator.validateValue(OlxDefaultPattern.class, field, value);
         if (!errors.isEmpty()) {
             throw new OlxDefaultPatternValidationException(errors);
         }
-        pattern.setDescriptionPatterns(description);
-        final var jsonPattern = objectMapper.writeValueAsString(pattern);
-        filterBuilderService.updatePattern(id, jsonPattern);
-        return Arrays.toString(description);
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern,
