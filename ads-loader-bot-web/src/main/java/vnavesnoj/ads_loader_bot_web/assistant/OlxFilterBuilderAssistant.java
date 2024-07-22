@@ -23,6 +23,7 @@ import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_web.exception.OlxDefaultPatternValidationException;
+import vnavesnoj.ads_loader_bot_web.exception.PriceFormatException;
 import vnavesnoj.ads_loader_bot_web.exception.PriceTypeNotExistsException;
 import vnavesnoj.ads_loader_bot_web.exception.UnknownInputFieldException;
 
@@ -140,12 +141,29 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputMinPrice(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var minPrice = parseInputToPrice(input);
+        validateField(Fields.minPrice, minPrice);
+        pattern.setMinPrice(minPrice);
+        updateFilterBuilderPattern(id, pattern);
+        return Long.toString(minPrice);
+    }
+
+    private long parseInputToPrice(String input) {
+        long minPrice = 0;
+        try {
+            minPrice = Long.parseLong(input.strip());
+        } catch (NumberFormatException e) {
+            throw new PriceFormatException(e);
+        }
+        if (minPrice < 0) {
+            throw new PriceFormatException("price must be not negative number");
+        }
+        return minPrice;
     }
 
     private String onInputPriceType(Long id, OlxDefaultPattern pattern, String input) {
         final var priceType = Arrays.stream(PriceType.values())
-                .filter(item -> item.name().equalsIgnoreCase(input))
+                .filter(item -> item.name().equalsIgnoreCase(input.strip()))
                 .findFirst()
                 .orElseThrow(PriceTypeNotExistsException::new);
         validateField(Fields.priceType, priceType);
