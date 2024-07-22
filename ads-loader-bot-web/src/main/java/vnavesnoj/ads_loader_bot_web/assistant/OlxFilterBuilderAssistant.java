@@ -123,7 +123,11 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputRegionNames(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var regionNames = getWorldPatterns(input);
+        validateField(Fields.regionNames, regionNames);
+        pattern.setRegionNames(regionNames);
+        updateFilterBuilderPattern(id, pattern);
+        return Arrays.toString(regionNames);
     }
 
     private String onInputCityNames(Long id, OlxDefaultPattern pattern, String input) {
