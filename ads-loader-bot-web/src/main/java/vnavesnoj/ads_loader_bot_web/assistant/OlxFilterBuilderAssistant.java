@@ -137,7 +137,11 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputMaxPrice(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var maxPrice = parseInputToPrice(input);
+        validateField(Fields.maxPrice, maxPrice);
+        pattern.setMaxPrice(maxPrice);
+        updateFilterBuilderPattern(id, pattern);
+        return Long.toString(maxPrice);
     }
 
     private String onInputMinPrice(Long id, OlxDefaultPattern pattern, String input) {
