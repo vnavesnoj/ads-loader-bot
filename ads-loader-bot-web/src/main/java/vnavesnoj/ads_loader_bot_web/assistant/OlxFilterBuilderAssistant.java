@@ -12,6 +12,7 @@ import jakarta.validation.Validator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
@@ -126,7 +127,11 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputCityNames(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var cityNames = getWorldPatterns(input);
+        validateField(Fields.cityNames, cityNames);
+        pattern.setCityNames(cityNames);
+        updateFilterBuilderPattern(id, pattern);
+        return Arrays.toString(cityNames);
     }
 
     private String onInputCurrencyCode(Long id, OlxDefaultPattern pattern, String input) {
@@ -181,16 +186,21 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputDescriptionPatterns(Long id, OlxDefaultPattern pattern, @NonNull String input) {
-        final var description = Optional.of(input)
+        final var description = getWorldPatterns(input);
+        validateField(Fields.descriptionPatterns, description);
+        pattern.setDescriptionPatterns(description);
+        updateFilterBuilderPattern(id, pattern);
+        return Arrays.toString(description);
+    }
+
+    @NotNull
+    private static String[] getWorldPatterns(String input) {
+        return Optional.of(input)
                 .map(item -> item.split(OLX_DEFAULT_PATTERN_DELIMITER))
                 .map(item -> Stream.of(item)
                         .map(String::strip)
                         .toArray(String[]::new))
                 .orElseThrow();
-        validateField(Fields.descriptionPatterns, description);
-        pattern.setDescriptionPatterns(description);
-        updateFilterBuilderPattern(id, pattern);
-        return Arrays.toString(description);
     }
 
     @SneakyThrows(JsonProcessingException.class)
