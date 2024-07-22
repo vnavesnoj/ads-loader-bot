@@ -22,10 +22,7 @@ import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern.Fields;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
-import vnavesnoj.ads_loader_bot_web.exception.OlxDefaultPatternValidationException;
-import vnavesnoj.ads_loader_bot_web.exception.PriceFormatException;
-import vnavesnoj.ads_loader_bot_web.exception.PriceTypeNotExistsException;
-import vnavesnoj.ads_loader_bot_web.exception.UnknownInputFieldException;
+import vnavesnoj.ads_loader_bot_web.exception.*;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -133,7 +130,14 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private String onInputCurrencyCode(Long id, OlxDefaultPattern pattern, String input) {
-        return null;
+        final var currencyCode = Arrays.stream(CurrencyCode.values())
+                .filter(item -> item.name().equalsIgnoreCase(input.strip()))
+                .findFirst()
+                .orElseThrow(CurrencyCodeNotExistsException::new);
+        validateField(Fields.currencyCode, currencyCode);
+        pattern.setCurrencyCode(currencyCode);
+        updateFilterBuilderPattern(id, pattern);
+        return currencyCode.name();
     }
 
     private String onInputMaxPrice(Long id, OlxDefaultPattern pattern, String input) {
