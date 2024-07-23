@@ -179,6 +179,14 @@ public abstract class BaseChatState implements ChatState {
     }
 
     @Override
+    public BaseRequest<SendMessage, SendResponse> onChooseResetInput(User user,
+                                                                     Chat chat,
+                                                                     Long filterBuilderId,
+                                                                     String input) {
+        throw new InvalidChatStateMethod("method 'onChooseResetInput' not supported by " + this.getClass().getName());
+    }
+
+    @Override
     public BaseRequest<SendMessage, SendResponse> onInput(User user, Chat chat, String input) {
         throw new InvalidChatStateMethod("method 'onInput' not supported by " + this.getClass().getName());
     }

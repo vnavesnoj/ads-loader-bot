@@ -163,6 +163,18 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
         );
     }
 
+    @BotRequest(value = "/reset-input {fbId:[\\d]+} {input:[\\S]+", type = MessageType.CALLBACK_QUERY)
+    public BaseRequest<SendMessage, SendResponse> onChooseResetInput(User user,
+                                                                     Chat chat,
+                                                                     @BotPathVariable("fbId") Long filterBuilderId,
+                                                                     @BotPathVariable("input") String input) {
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onChooseResetInput(user, chat, filterBuilderId, input)
+        );
+    }
+
     @BotRequest(value = "{input:[\\s\\S]+}", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
     public BaseRequest<SendMessage, SendResponse> onInput(User user,
                                                           Chat chat,

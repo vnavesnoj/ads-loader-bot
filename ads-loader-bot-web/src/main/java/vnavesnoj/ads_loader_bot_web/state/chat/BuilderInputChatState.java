@@ -51,4 +51,15 @@ public class BuilderInputChatState extends BaseChatState {
                 .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with user.id = " + user.id() + " not exists"));
         return onBuilder(user, chat);
     }
+
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onChooseResetInput(User user, Chat chat, Long filterBuilderId, String input) {
+        filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())
+                .map(item -> filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
+                        .resetInput(item, input))
+                .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with id = " + filterBuilderId
+                        + " and FilterBuilder.user.id = " + user.id()
+                        + " does not exist"));
+        return onBuilder(user, chat);
+    }
 }

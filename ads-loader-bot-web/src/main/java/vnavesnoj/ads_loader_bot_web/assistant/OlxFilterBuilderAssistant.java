@@ -98,6 +98,12 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
 
     @SneakyThrows(JsonProcessingException.class)
     @Override
+    public BaseRequest<SendMessage, SendResponse> resetInput(FilterBuilderReadDto filterBuilder, String inputField) {
+        return null;
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    @Override
     public String handleInputRequest(FilterBuilderReadDto filterBuilder, String input) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
         final var currentInput = filterBuilder.getCurrentInput();
