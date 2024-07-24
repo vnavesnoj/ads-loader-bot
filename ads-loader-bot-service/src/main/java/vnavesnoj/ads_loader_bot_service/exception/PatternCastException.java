@@ -8,4 +8,8 @@ public class PatternCastException extends RuntimeException {
     public PatternCastException(String s) {
         super(s);
     }
+
+    public PatternCastException(Throwable e) {
+        super(e);
+    }
 }

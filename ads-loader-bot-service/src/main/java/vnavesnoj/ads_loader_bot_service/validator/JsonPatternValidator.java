@@ -16,4 +16,6 @@ public interface JsonPatternValidator {
                 .map(Field::getName)
                 .anyMatch(item -> item.equals(field));
     }
+
+    String validateJsonPattern(String jsonPattern, AnalyzerEnum analyzer);
 }

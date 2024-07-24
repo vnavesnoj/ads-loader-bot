@@ -93,10 +93,10 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     public Optional<FilterBuilderReadDto> updatePattern(Long id, String pattern) {
         return filterBuilderRepository.findById(id)
                 .map(item -> {
+                    jsonPatternValidator.validateJsonPattern(pattern, item.getSpot().getAnalyzer());
                     item.setPattern(pattern);
                     return item;
                 })
-                .map(this::validatePattern)
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map);
     }
