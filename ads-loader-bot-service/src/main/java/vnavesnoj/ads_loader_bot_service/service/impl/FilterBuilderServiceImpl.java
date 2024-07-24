@@ -16,6 +16,7 @@ import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_service.validator.ObjectValidator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -36,6 +37,8 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     private final Mapper<FilterBuilderCreateDto, FilterBuilder> filterBuilderCreateMapper;
     private final Mapper<FilterBuilderEditDto, FilterBuilder> filterBuilderEditMapper;
 
+    private final ObjectValidator<FilterBuilderCreateDto> patternCreateValidator;
+
     private final ObjectMapper objectMapper;
     private final Validator validator;
 
@@ -55,6 +58,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     @Transactional
     public FilterBuilderReadDto create(FilterBuilderCreateDto filterBuilder) {
         return Optional.ofNullable(filterBuilder)
+                .map(patternCreateValidator::validate)
                 .map(filterBuilderCreateMapper::map)
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map)
