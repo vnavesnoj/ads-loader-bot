@@ -12,12 +12,14 @@ import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderReposit
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
+import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
 import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.validator.JsonPatternValidator;
 import vnavesnoj.ads_loader_bot_service.validator.ObjectValidator;
+import vnavesnoj.ads_loader_bot_service.validator.component.PatternValidatorHelper;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -40,6 +42,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
 
     private final ObjectValidator<FilterBuilderCreateDto> patternCreateValidator;
     private final ObjectValidator<FilterBuilderEditDto> patternEditValidator;
+    private final PatternValidatorHelper patternValidatorHelper;
     private final JsonPatternValidator jsonPatternValidator;
 
     private final ObjectMapper objectMapper;
@@ -100,6 +103,43 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
                 })
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map);
+    }
+
+    @SneakyThrows
+    @Override
+    public Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value) {
+        final var fb = filterBuilderRepository.findById(id)
+                .orElse(null);
+        if (fb == null) {
+            return Optional.empty();
+        }
+        final Class<?> patternClass = fb.getSpot().getAnalyzer().getPatternClass();
+        final Object pattern;
+        try {
+            pattern = objectMapper.readValue(fb.getPattern(), patternClass);
+        } catch (JsonProcessingException e) {
+            throw new PatternCastException(e);
+        }
+        final var currentInput = Optional.ofNullable(fb.getCurrentInput())
+                .orElseThrow(() ->
+                        new NullPointerException("current input for the FilterBuilder with id = %s is null".formatted(fb.getId()))
+                );
+        final Field field;
+        try {
+            field = pattern.getClass().getDeclaredField(currentInput);
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException(
+                    "field '%s' for the FilterBuilder with id = %s not exists".formatted(currentInput, fb.getId()),
+                    exception
+            );
+        }
+        field.setAccessible(true);
+        field.set(pattern, value);
+        field.setAccessible(false);
+        patternValidatorHelper.validatePatternField(pattern, field.getName());
+        fb.setPattern(objectMapper.writeValueAsString(pattern));
+        final var saved = filterBuilderRepository.saveAndFlush(fb);
+        return Optional.of(filterBuilderReadMapper.map(saved));
     }
 
     @Override

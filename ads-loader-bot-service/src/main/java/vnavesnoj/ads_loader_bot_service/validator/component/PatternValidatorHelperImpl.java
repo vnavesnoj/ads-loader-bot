@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Component
-public class ValidatorHelperImpl implements ValidatorHelper {
+public class PatternValidatorHelperImpl implements PatternValidatorHelper {
 
     private final SpotRepository spotRepository;
     private final Validator validator;
@@ -44,6 +44,14 @@ public class ValidatorHelperImpl implements ValidatorHelper {
     @Override
     public void validatePattern(Object pattern) throws PatternValidationException {
         final var errors = validator.validate(pattern);
+        if (!errors.isEmpty()) {
+            throw new PatternValidationException(errors);
+        }
+    }
+
+    @Override
+    public void validatePatternField(Object pattern, String field) {
+        final var errors = validator.validateProperty(pattern, field);
         if (!errors.isEmpty()) {
             throw new PatternValidationException(errors);
         }

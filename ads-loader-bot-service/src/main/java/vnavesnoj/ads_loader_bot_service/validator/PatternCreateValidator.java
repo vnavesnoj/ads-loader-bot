@@ -7,7 +7,7 @@ import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderReposit
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.exception.FilterBuilderAlreadyExistsException;
 import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
-import vnavesnoj.ads_loader_bot_service.validator.component.ValidatorHelper;
+import vnavesnoj.ads_loader_bot_service.validator.component.PatternValidatorHelper;
 
 /**
  * @author vnavesnoj
@@ -17,19 +17,19 @@ import vnavesnoj.ads_loader_bot_service.validator.component.ValidatorHelper;
 @Component
 public class PatternCreateValidator implements ObjectValidator<FilterBuilderCreateDto> {
 
-    private final ValidatorHelper validatorHelper;
+    private final PatternValidatorHelper patternValidatorHelper;
     private final FilterBuilderRepository filterBuilderRepository;
     private final Validator validator;
 
     @Override
     public FilterBuilderCreateDto validate(FilterBuilderCreateDto object) throws PatternValidationException {
-        validatorHelper.checkPatternType(object.getPattern(), object.getSpotId());
+        patternValidatorHelper.checkPatternType(object.getPattern(), object.getSpotId());
         filterBuilderRepository.findByUserId(object.getUserId())
                 .ifPresent(item -> {
                     throw new FilterBuilderAlreadyExistsException("FilterBuilder with user.id = %s already exists"
                             .formatted(object.getUserId()));
                 });
-        validatorHelper.validatePattern(object.getPattern());
+        patternValidatorHelper.validatePattern(object.getPattern());
         return object;
     }
 }

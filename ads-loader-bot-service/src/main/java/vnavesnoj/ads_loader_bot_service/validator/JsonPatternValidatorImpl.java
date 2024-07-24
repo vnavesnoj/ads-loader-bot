@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
-import vnavesnoj.ads_loader_bot_service.validator.component.ValidatorHelper;
+import vnavesnoj.ads_loader_bot_service.validator.component.PatternValidatorHelper;
 
 /**
  * @author vnavesnoj
@@ -16,7 +16,7 @@ import vnavesnoj.ads_loader_bot_service.validator.component.ValidatorHelper;
 @Component
 public class JsonPatternValidatorImpl implements JsonPatternValidator {
 
-    private final ValidatorHelper validatorHelper;
+    private final PatternValidatorHelper patternValidatorHelper;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -27,7 +27,7 @@ public class JsonPatternValidatorImpl implements JsonPatternValidator {
         } catch (JsonProcessingException e) {
             throw new PatternCastException(e);
         }
-        validatorHelper.validatePattern(pattern);
+        patternValidatorHelper.validatePattern(pattern);
         return jsonPattern;
     }
 }

@@ -24,6 +24,8 @@ public interface FilterBuilderService {
 
     Optional<FilterBuilderReadDto> updatePattern(Long id, String pattern);
 
+    Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value);
+
     Optional<FilterBuilderReadDto> update(Long id, FilterBuilderEditDto filterBuilder);
 
     boolean deleteByUserId(Long userId);

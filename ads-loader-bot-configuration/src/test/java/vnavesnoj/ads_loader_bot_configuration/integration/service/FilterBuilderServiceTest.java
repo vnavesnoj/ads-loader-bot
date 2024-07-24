@@ -47,4 +47,10 @@ public class FilterBuilderServiceTest {
         final var result = AnalyzerEnum.OLX_UA_DEFAULT.getPatternClass().isInstance(new OlxDefaultPattern());
         System.out.println(result);
     }
+
+    @Test
+    void updatePatternField() {
+        final Object value = new String[]{"dummy1"};
+        filterBuilderService.updatePatternField(20L, value);
+    }
 }

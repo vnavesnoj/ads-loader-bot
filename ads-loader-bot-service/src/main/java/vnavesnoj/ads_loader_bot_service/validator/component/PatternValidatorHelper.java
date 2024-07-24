@@ -8,9 +8,11 @@ import vnavesnoj.ads_loader_bot_service.exception.SpotNotExistsException;
  * @author vnavesnoj
  * @mail vnavesnoj@gmail.com
  */
-public interface ValidatorHelper {
+public interface PatternValidatorHelper {
 
     void checkPatternType(Object pattern, Integer spotId) throws SpotNotExistsException, PatternCastException;
 
     void validatePattern(Object pattern) throws PatternValidationException;
+
+    void validatePatternField(Object pattern, String field) throws PatternValidationException;
 }

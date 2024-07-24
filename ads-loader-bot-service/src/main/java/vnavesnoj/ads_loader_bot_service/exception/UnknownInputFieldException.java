@@ -11,4 +11,8 @@ public class UnknownInputFieldException extends RuntimeException {
     public UnknownInputFieldException(String s) {
         super(s);
     }
+
+    public UnknownInputFieldException(Throwable e) {
+        super(e);
+    }
 }
