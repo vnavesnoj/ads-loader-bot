@@ -39,6 +39,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     private final Mapper<FilterBuilderEditDto, FilterBuilder> filterBuilderEditMapper;
 
     private final ObjectValidator<FilterBuilderCreateDto> patternCreateValidator;
+    private final ObjectValidator<FilterBuilderEditDto> patternEditValidator;
     private final JsonPatternValidator jsonPatternValidator;
 
     private final ObjectMapper objectMapper;
@@ -105,7 +106,10 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     @Transactional
     public Optional<FilterBuilderReadDto> update(Long id, FilterBuilderEditDto filterBuilder) {
         return filterBuilderRepository.findById(id)
-                .map(item -> filterBuilderEditMapper.map(filterBuilder, item))
+                .map(item -> {
+                    final var validatedDto = patternEditValidator.validate(filterBuilder);
+                    return filterBuilderEditMapper.map(validatedDto, item);
+                })
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map);
     }

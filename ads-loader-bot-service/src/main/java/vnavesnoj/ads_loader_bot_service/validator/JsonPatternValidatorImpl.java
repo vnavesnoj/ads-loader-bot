@@ -2,12 +2,11 @@ package vnavesnoj.ads_loader_bot_service.validator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
-import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
+import vnavesnoj.ads_loader_bot_service.validator.component.ValidatorHelper;
 
 /**
  * @author vnavesnoj
@@ -17,8 +16,8 @@ import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 @Component
 public class JsonPatternValidatorImpl implements JsonPatternValidator {
 
+    private final ValidatorHelper validatorHelper;
     private final ObjectMapper objectMapper;
-    private final Validator validator;
 
     @Override
     public String validateJsonPattern(String jsonPattern, AnalyzerEnum analyzer) {
@@ -28,10 +27,7 @@ public class JsonPatternValidatorImpl implements JsonPatternValidator {
         } catch (JsonProcessingException e) {
             throw new PatternCastException(e);
         }
-        final var errors = validator.validate(pattern);
-        if (!errors.isEmpty()) {
-            throw new PatternValidationException(errors);
-        }
+        validatorHelper.validatePattern(pattern);
         return jsonPattern;
     }
 }

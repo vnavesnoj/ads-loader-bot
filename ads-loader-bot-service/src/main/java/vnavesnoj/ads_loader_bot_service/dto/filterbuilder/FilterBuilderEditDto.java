@@ -10,7 +10,8 @@ import lombok.Value;
 @Value
 public class FilterBuilderEditDto {
 
-    String pattern;
+    @NonNull
+    Object pattern;
 
     String currentInput;
 
