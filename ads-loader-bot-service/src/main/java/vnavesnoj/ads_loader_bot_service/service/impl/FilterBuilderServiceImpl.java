@@ -16,6 +16,7 @@ import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_service.validator.JsonPatternValidator;
 import vnavesnoj.ads_loader_bot_service.validator.ObjectValidator;
 
 import java.lang.reflect.Field;
@@ -38,6 +39,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     private final Mapper<FilterBuilderEditDto, FilterBuilder> filterBuilderEditMapper;
 
     private final ObjectValidator<FilterBuilderCreateDto> patternCreateValidator;
+    private final JsonPatternValidator jsonPatternValidator;
 
     private final ObjectMapper objectMapper;
     private final Validator validator;
@@ -69,9 +71,17 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     @Transactional
     public Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input) {
         return filterBuilderRepository.findById(id)
+                .filter(fb -> {
+                    if (jsonPatternValidator.fieldExists(fb.getSpot().getAnalyzer(), input)) {
+                        return true;
+                    } else {
+                        throw new UnknownInputFieldException("unknown input field '"
+                                + input + "' for FilterBuilder.id = "
+                                + id);
+                    }
+                })
                 .map(item -> {
-                    final var validatedInput = validateCurrentInput(item, input);
-                    item.setCurrentInput(validatedInput);
+                    item.setCurrentInput(input);
                     return item;
                 })
                 .map(filterBuilderRepository::saveAndFlush)

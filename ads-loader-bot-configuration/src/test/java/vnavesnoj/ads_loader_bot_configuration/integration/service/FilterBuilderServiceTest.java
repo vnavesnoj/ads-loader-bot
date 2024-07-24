@@ -29,9 +29,9 @@ public class FilterBuilderServiceTest {
     @Disabled
     void testValidation() {
         assertThatExceptionOfType(UnknownInputFieldException.class)
-                .isThrownBy(() -> filterBuilderService.updateCurrentInput(18L, "dummy"));
+                .isThrownBy(() -> filterBuilderService.updateCurrentInput(19L, "dummy"));
         assertThatNoException()
-                .isThrownBy(() -> filterBuilderService.updateCurrentInput(18L, "descriptionPatterns"));
+                .isThrownBy(() -> filterBuilderService.updateCurrentInput(19L, "descriptionPatterns"));
     }
 
     @Test
