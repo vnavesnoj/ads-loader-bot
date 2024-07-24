@@ -22,8 +22,11 @@ import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern.Fields;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
+import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
-import vnavesnoj.ads_loader_bot_web.exception.*;
+import vnavesnoj.ads_loader_bot_web.exception.CurrencyCodeNotExistsException;
+import vnavesnoj.ads_loader_bot_web.exception.PriceFormatException;
+import vnavesnoj.ads_loader_bot_web.exception.PriceTypeNotExistsException;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -96,7 +99,6 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         };
     }
 
-    @SneakyThrows(JsonProcessingException.class)
     @Override
     public BaseRequest<SendMessage, SendResponse> resetInput(FilterBuilderReadDto filterBuilder, String inputField) {
         return null;
@@ -220,10 +222,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     }
 
     private void validateField(String field, Object value) {
-        final var errors = validator.validateValue(OlxDefaultPattern.class, field, value);
-        if (!errors.isEmpty()) {
-            throw new OlxDefaultPatternValidationException(errors);
-        }
+//        final var errors = validator.validateValue(OlxDefaultPattern.class, field, value);
+//        if (!errors.isEmpty()) {
+//            throw new OlxDefaultPatternValidationException(errors);
+//        }
     }
 
     private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern,

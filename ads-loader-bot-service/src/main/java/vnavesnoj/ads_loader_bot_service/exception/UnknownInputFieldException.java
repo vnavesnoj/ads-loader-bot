@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_web.exception;
+package vnavesnoj.ads_loader_bot_service.exception;
 
 import vnavesnoj.ads_loader_bot_common.annotation.BotResponseMessage;
 

@@ -1,6 +1,10 @@
 package vnavesnoj.ads_loader_bot_service.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
@@ -8,9 +12,13 @@ import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderReposit
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
+import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
+import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -27,6 +35,9 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     private final Mapper<FilterBuilder, FilterBuilderReadDto> filterBuilderReadMapper;
     private final Mapper<FilterBuilderCreateDto, FilterBuilder> filterBuilderCreateMapper;
     private final Mapper<FilterBuilderEditDto, FilterBuilder> filterBuilderEditMapper;
+
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     @Override
     public Optional<FilterBuilderReadDto> findById(Long id) {
@@ -55,7 +66,8 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     public Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input) {
         return filterBuilderRepository.findById(id)
                 .map(item -> {
-                    item.setCurrentInput(input);
+                    final var validatedInput = validateCurrentInput(item, input);
+                    item.setCurrentInput(validatedInput);
                     return item;
                 })
                 .map(filterBuilderRepository::saveAndFlush)
@@ -70,6 +82,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
                     item.setPattern(pattern);
                     return item;
                 })
+                .map(this::validatePattern)
                 .map(filterBuilderRepository::saveAndFlush)
                 .map(filterBuilderReadMapper::map);
     }
@@ -99,5 +112,35 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
                     return true;
                 })
                 .orElse(false);
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    private FilterBuilder validatePattern(FilterBuilder filterBuilder) {
+        final Class<?> patternClass = getPatternClass(filterBuilder);
+        final Object pattern = objectMapper.readValue(filterBuilder.getPattern(), patternClass);
+        final var errors = validator.validate(pattern);
+        if (!errors.isEmpty()) {
+            throw new PatternValidationException(errors);
+        }
+        return filterBuilder;
+    }
+
+    private String validateCurrentInput(FilterBuilder filterBuilder, String currentInput) {
+        final Class<?> patternClass = getPatternClass(filterBuilder);
+        return Arrays.stream(patternClass.getDeclaredFields())
+                .map(Field::getName)
+                .filter(field -> field.equalsIgnoreCase(currentInput))
+                .findFirst()
+                .orElseThrow((() ->
+                        new UnknownInputFieldException("unknown input field '"
+                                + currentInput + "' for FilterBuilder.id = "
+                                + filterBuilder.getId())
+                ));
+    }
+
+    private static Class<?> getPatternClass(FilterBuilder filterBuilder) {
+        return filterBuilder.getSpot()
+                .getAnalyzer()
+                .getPatternClass();
     }
 }

@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_web.config;
+package vnavesnoj.ads_loader_bot_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
