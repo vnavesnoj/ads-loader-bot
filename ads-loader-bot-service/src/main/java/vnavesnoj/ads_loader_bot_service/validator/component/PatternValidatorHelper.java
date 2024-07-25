@@ -1,5 +1,6 @@
 package vnavesnoj.ads_loader_bot_service.validator.component;
 
+import vnavesnoj.ads_loader_bot_common.constant.AnalyzerEnum;
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
 import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 import vnavesnoj.ads_loader_bot_service.exception.SpotNotExistsException;
@@ -15,4 +16,8 @@ public interface PatternValidatorHelper {
     void validatePattern(Object pattern) throws PatternValidationException;
 
     void validatePatternField(Object pattern, String field) throws PatternValidationException;
+
+    boolean fieldExists(AnalyzerEnum analyzer, String field);
+
+    String validateJsonPattern(String jsonPattern, AnalyzerEnum analyzer);
 }

@@ -2,7 +2,6 @@ package vnavesnoj.ads_loader_bot_service.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -13,16 +12,13 @@ import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
-import vnavesnoj.ads_loader_bot_service.exception.PatternValidationException;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
-import vnavesnoj.ads_loader_bot_service.validator.JsonPatternValidator;
 import vnavesnoj.ads_loader_bot_service.validator.ObjectValidator;
 import vnavesnoj.ads_loader_bot_service.validator.component.PatternValidatorHelper;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -43,10 +39,8 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     private final ObjectValidator<FilterBuilderCreateDto> patternCreateValidator;
     private final ObjectValidator<FilterBuilderEditDto> patternEditValidator;
     private final PatternValidatorHelper patternValidatorHelper;
-    private final JsonPatternValidator jsonPatternValidator;
 
     private final ObjectMapper objectMapper;
-    private final Validator validator;
 
     @Override
     public Optional<FilterBuilderReadDto> findById(Long id) {
@@ -76,7 +70,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     public Optional<FilterBuilderReadDto> updateCurrentInput(Long id, String input) {
         return filterBuilderRepository.findById(id)
                 .filter(fb -> {
-                    if (jsonPatternValidator.fieldExists(fb.getSpot().getAnalyzer(), input)) {
+                    if (patternValidatorHelper.fieldExists(fb.getSpot().getAnalyzer(), input)) {
                         return true;
                     } else {
                         throw new UnknownInputFieldException("unknown input field '"
@@ -97,7 +91,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     public Optional<FilterBuilderReadDto> updatePattern(Long id, String pattern) {
         return filterBuilderRepository.findById(id)
                 .map(item -> {
-                    jsonPatternValidator.validateJsonPattern(pattern, item.getSpot().getAnalyzer());
+                    patternValidatorHelper.validateJsonPattern(pattern, item.getSpot().getAnalyzer());
                     item.setPattern(pattern);
                     return item;
                 })
@@ -170,35 +164,5 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
                     return true;
                 })
                 .orElse(false);
-    }
-
-    @SneakyThrows(JsonProcessingException.class)
-    private FilterBuilder validatePattern(FilterBuilder filterBuilder) {
-        final Class<?> patternClass = getPatternClass(filterBuilder);
-        final Object pattern = objectMapper.readValue(filterBuilder.getPattern(), patternClass);
-        final var errors = validator.validate(pattern);
-        if (!errors.isEmpty()) {
-            throw new PatternValidationException(errors);
-        }
-        return filterBuilder;
-    }
-
-    private String validateCurrentInput(FilterBuilder filterBuilder, String currentInput) {
-        final Class<?> patternClass = getPatternClass(filterBuilder);
-        return Arrays.stream(patternClass.getDeclaredFields())
-                .map(Field::getName)
-                .filter(field -> field.equalsIgnoreCase(currentInput))
-                .findFirst()
-                .orElseThrow((() ->
-                        new UnknownInputFieldException("unknown input field '"
-                                + currentInput + "' for FilterBuilder.id = "
-                                + filterBuilder.getId())
-                ));
-    }
-
-    private static Class<?> getPatternClass(FilterBuilder filterBuilder) {
-        return filterBuilder.getSpot()
-                .getAnalyzer()
-                .getPatternClass();
     }
 }
