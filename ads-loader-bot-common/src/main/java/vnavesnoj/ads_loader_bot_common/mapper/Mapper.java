@@ -1,4 +1,4 @@
-package vnavesnoj.ads_loader_bot_service.mapper;
+package vnavesnoj.ads_loader_bot_common.mapper;
 
 /**
  * @author vnavesnoj

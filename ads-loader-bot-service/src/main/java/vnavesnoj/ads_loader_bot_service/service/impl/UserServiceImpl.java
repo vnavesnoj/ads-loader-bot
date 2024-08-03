@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_common.constant.ChatStateEnum;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.User;
 import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.user.UserReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.UserService;
 
 import java.time.Instant;

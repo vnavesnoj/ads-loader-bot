@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Ad;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterAd;
@@ -18,7 +19,6 @@ import vnavesnoj.ads_loader_bot_service.database.repository.AdRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterAdRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterRepository;
 import vnavesnoj.ads_loader_bot_service.factory.AnalyzerFactory;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.AdLoadJob;
 import vnavesnoj.ads_loader_bot_service.service.component.AdAnalyzer;
 

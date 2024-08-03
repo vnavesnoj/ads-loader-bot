@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterRepository;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterMetaReadDto;
 import vnavesnoj.ads_loader_bot_service.dto.filter.FilterReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterService;
 
 import java.time.Instant;

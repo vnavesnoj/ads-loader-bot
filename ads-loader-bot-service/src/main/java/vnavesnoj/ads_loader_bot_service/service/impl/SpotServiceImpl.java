@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
 import vnavesnoj.ads_loader_bot_service.dto.spot.SpotReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.SpotService;
 
 import java.util.Optional;

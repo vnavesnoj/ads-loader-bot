@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vnavesnoj.ads_loader_bot_common.constant.Platform;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Category;
 import vnavesnoj.ads_loader_bot_service.database.repository.CategoryRepository;
 import vnavesnoj.ads_loader_bot_service.dto.category.CategoryReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.CategoryService;
 
 import java.util.Optional;

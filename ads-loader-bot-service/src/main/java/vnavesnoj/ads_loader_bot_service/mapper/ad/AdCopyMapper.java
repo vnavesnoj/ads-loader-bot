@@ -1,8 +1,8 @@
 package vnavesnoj.ads_loader_bot_service.mapper.ad;
 
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Ad;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 /**
  * @author vnavesnoj

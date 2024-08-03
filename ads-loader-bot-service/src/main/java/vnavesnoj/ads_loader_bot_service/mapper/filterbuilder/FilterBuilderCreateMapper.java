@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
 import vnavesnoj.ads_loader_bot_service.database.repository.SpotRepository;
 import vnavesnoj.ads_loader_bot_service.database.repository.UserRepository;
@@ -12,7 +13,6 @@ import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
 import vnavesnoj.ads_loader_bot_service.exception.SpotNotExistsException;
 import vnavesnoj.ads_loader_bot_service.exception.UserNotExistsException;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 import java.time.Instant;
 

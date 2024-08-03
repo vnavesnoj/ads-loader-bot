@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 /**
  * @author vnavesnoj

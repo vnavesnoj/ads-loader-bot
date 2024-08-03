@@ -1,9 +1,9 @@
 package vnavesnoj.ads_loader_bot_service.mapper.spot;
 
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Spot;
 import vnavesnoj.ads_loader_bot_service.dto.spot.SpotReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 
 /**
  * @author vnavesnoj

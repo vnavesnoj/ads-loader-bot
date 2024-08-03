@@ -26,6 +26,8 @@ public interface FilterBuilderService {
 
     Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value);
 
+    Optional<FilterBuilderReadDto> updatePatternField(Long id, String fieldName, Object value);
+
     Optional<FilterBuilderReadDto> update(Long id, FilterBuilderEditDto filterBuilder);
 
     boolean deleteByUserId(Long userId);

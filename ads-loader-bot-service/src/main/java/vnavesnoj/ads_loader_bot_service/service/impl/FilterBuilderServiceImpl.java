@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterBuilder;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderRepository;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
@@ -13,13 +14,13 @@ import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderEditDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.exception.PatternCastException;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_service.validator.ObjectValidator;
 import vnavesnoj.ads_loader_bot_service.validator.component.PatternValidatorHelper;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author vnavesnoj
@@ -102,6 +103,24 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
     @SneakyThrows
     @Override
     public Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value) {
+        return updatePatternField(
+                id,
+                value,
+                fb -> Optional.ofNullable(fb.getCurrentInput())
+                        .orElseThrow(() ->
+                                new NullPointerException("current input for the FilterBuilder with id = %s is null".formatted(fb.getId()))
+                        )
+        );
+    }
+
+    @SneakyThrows
+    @Override
+    public Optional<FilterBuilderReadDto> updatePatternField(Long id, String fieldName, Object value) {
+        return updatePatternField(id, value, fb -> fieldName);
+    }
+
+    @SneakyThrows
+    private Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value, Function<FilterBuilder, String> fieldFunction) {
         final var fb = filterBuilderRepository.findById(id)
                 .orElse(null);
         if (fb == null) {
@@ -114,10 +133,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
         } catch (JsonProcessingException e) {
             throw new PatternCastException(e);
         }
-        final var currentInput = Optional.ofNullable(fb.getCurrentInput())
-                .orElseThrow(() ->
-                        new NullPointerException("current input for the FilterBuilder with id = %s is null".formatted(fb.getId()))
-                );
+        final var currentInput = fieldFunction.apply(fb);
         final Field field;
         try {
             field = pattern.getClass().getDeclaredField(currentInput);

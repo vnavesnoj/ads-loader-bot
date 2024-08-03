@@ -8,7 +8,6 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import jakarta.validation.Validator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -20,10 +19,10 @@ import vnavesnoj.ads_loader_bot_common.constant.CurrencyCode;
 import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern.Fields;
-import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_web.assistant.component.FilterBuilderManager;
 import vnavesnoj.ads_loader_bot_web.exception.CurrencyCodeNotExistsException;
 import vnavesnoj.ads_loader_bot_web.exception.PriceFormatException;
 import vnavesnoj.ads_loader_bot_web.exception.PriceTypeNotExistsException;
@@ -42,9 +41,9 @@ import java.util.stream.Stream;
 public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
 
     private final FilterBuilderService filterBuilderService;
+    private final FilterBuilderManager olxDefaultFilterBuilderManager;
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
-    private final Validator validator;
 
     private final AnalyzerEnum analyzer = AnalyzerEnum.OLX_UA_DEFAULT;
     private static final String OLX_DEFAULT_PATTERN_DELIMITER = ",";
@@ -66,14 +65,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                                                                          Long chatId,
                                                                          Integer spotId,
                                                                          Locale locale) {
-        final var createdBuilder = Optional.of(OlxDefaultPattern.builder()
-                        .priceType(PriceType.ALL)
-                        .minPrice(0L)
-                        .currencyCode(CurrencyCode.UAH)
-                        .build())
-                .map(pattern -> new FilterBuilderCreateDto(pattern, spotId, userId))
-                .map(filterBuilderService::create)
-                .orElseThrow(RuntimeException::new);
+        final var createdBuilder = olxDefaultFilterBuilderManager.createNewFilterBuilder(userId, spotId);
         final var header = messageSource.getMessage("bot.create.filter-builder-created", null, locale) + "\n\n";
         return getFilterBuilderMessage(chatId, locale, createdBuilder, header);
     }

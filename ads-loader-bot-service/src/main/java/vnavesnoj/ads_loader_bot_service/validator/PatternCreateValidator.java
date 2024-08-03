@@ -1,6 +1,5 @@
 package vnavesnoj.ads_loader_bot_service.validator;
 
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterBuilderRepository;
@@ -19,7 +18,6 @@ public class PatternCreateValidator implements ObjectValidator<FilterBuilderCrea
 
     private final PatternValidatorHelper patternValidatorHelper;
     private final FilterBuilderRepository filterBuilderRepository;
-    private final Validator validator;
 
     @Override
     public FilterBuilderCreateDto validate(FilterBuilderCreateDto object) throws PatternValidationException {

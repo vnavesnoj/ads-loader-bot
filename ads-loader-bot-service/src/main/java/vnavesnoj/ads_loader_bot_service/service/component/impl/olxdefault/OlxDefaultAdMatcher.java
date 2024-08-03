@@ -2,10 +2,10 @@ package vnavesnoj.ads_loader_bot_service.service.component.impl.olxdefault;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultAdBody;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.Filter;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.component.AdMatcher;
 
 import static org.apache.commons.lang3.StringUtils.containsAnyIgnoreCase;

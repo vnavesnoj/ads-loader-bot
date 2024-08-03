@@ -5,10 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vnavesnoj.ads_loader_bot_common.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_persistence.database.entity.FilterAd;
 import vnavesnoj.ads_loader_bot_service.database.repository.FilterAdRepository;
 import vnavesnoj.ads_loader_bot_service.dto.filterad.FilterAdReadDto;
-import vnavesnoj.ads_loader_bot_service.mapper.Mapper;
 import vnavesnoj.ads_loader_bot_service.service.FilterAdService;
 
 /**
