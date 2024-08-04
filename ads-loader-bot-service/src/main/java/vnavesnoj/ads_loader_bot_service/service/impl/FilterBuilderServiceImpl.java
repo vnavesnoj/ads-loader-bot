@@ -102,6 +102,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public Optional<FilterBuilderReadDto> updatePatternField(Long id, Object value) {
         return updatePatternField(
                 id,
@@ -115,6 +116,7 @@ public class FilterBuilderServiceImpl implements FilterBuilderService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public Optional<FilterBuilderReadDto> updatePatternField(Long id, String fieldName, Object value) {
         return updatePatternField(id, value, fb -> fieldName);
     }
