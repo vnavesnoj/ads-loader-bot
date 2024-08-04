@@ -8,7 +8,6 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -36,15 +34,13 @@ public class OlxDefaultFilterBuilderInfoProducer implements FilterBuilderInfoPro
     public BaseRequest<SendMessage, SendResponse> getFilterBuilderInfo(FilterBuilderReadDto filterBuilder, Long chatId, Locale locale, @Nullable String header) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
 
-        final String descriptionPatterns = getDescriptionPatterns(locale, pattern);
-        final String priceType = getPriceType(locale, pattern);
-        final long minPrice = getMinPrice(pattern);
-        final String maxPrice = getMaxPrice(locale, pattern);
-        final String currencyCode = getCurrencyCode(
-                pattern,
-                messageSource.getMessage("bot.filter.info.currency-code", null, locale));
-        final String city = getCity(locale, pattern);
-        final String region = getRegion(locale, pattern);
+        final String descriptionPatterns = pattern.getDescriptionPatterns(messageSource, locale);
+        final String priceType = pattern.getPriceType(messageSource, locale);
+        final String minPrice = pattern.getMinPriceString();
+        final String maxPrice = pattern.getMaxPriceString(messageSource, locale);
+        final String currencyCode = pattern.getCurrencyCode(messageSource, locale);
+        final String city = pattern.getCityNames(messageSource, locale);
+        final String region = pattern.getRegionNames(messageSource, locale);
 
         final String message = (header == null ? "" : header) +
                 messageSource.getMessage("bot.filter.info.platform.formatted", new Object[]{filterBuilder.getSpot().getPlatform().getDomain()}, locale) + '\n' +
@@ -79,52 +75,5 @@ public class OlxDefaultFilterBuilderInfoProducer implements FilterBuilderInfoPro
         return new SendMessage(chatId, message)
                 .parseMode(ParseMode.Markdown)
                 .replyMarkup(keybord);
-    }
-
-    @NonNull
-    private String getRegion(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getRegionNames() == null || pattern.getRegionNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getRegionNames());
-    }
-
-    @NonNull
-    private String getCity(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getCityNames() == null || pattern.getCityNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getCityNames());
-    }
-
-    @NonNull
-    private String getPriceType(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getPriceType() == null
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
-    }
-
-    @NonNull
-    private String getDescriptionPatterns(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getDescriptionPatterns());
-    }
-
-    @NonNull
-    private String getMaxPrice(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getMaxPrice() == null
-                ? messageSource.getMessage("bot.filter.info.max", null, locale)
-                : pattern.getMaxPrice().toString();
-    }
-
-    @NonNull
-    private Long getMinPrice(OlxDefaultPattern pattern) {
-        return pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
-    }
-
-    @NonNull
-    private String getCurrencyCode(OlxDefaultPattern pattern, String defaultMessage) {
-        return pattern.getCurrencyCode() == null
-                ? defaultMessage
-                : pattern.getCurrencyCode().name();
     }
 }

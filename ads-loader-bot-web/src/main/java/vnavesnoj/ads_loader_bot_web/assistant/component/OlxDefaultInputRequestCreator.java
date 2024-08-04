@@ -49,7 +49,7 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                                                                                     Locale locale) {
         final var message = messageSource.getMessage(
                 "bot.create.input.description-patterns.formatted",
-                new Object[]{getDescriptionPatterns(locale, pattern)},
+                new Object[]{pattern.getDescriptionPatterns(messageSource, locale)},
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
@@ -64,7 +64,7 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                                                                           Locale locale) {
         final var message = messageSource.getMessage(
                 "bot.create.input.price-type.formatted",
-                new Object[]{getPriceType(locale, pattern)},
+                new Object[]{pattern.getPriceType(messageSource, locale)},
                 locale
         );
         final var freeTypeButton = new InlineKeyboardButton(
@@ -91,14 +91,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
     private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(OlxDefaultPattern pattern,
                                                                          Long chatId,
                                                                          Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, '(' + messageSource.getMessage(
+        final var currencyCode = pattern.getCurrencyCode('(' + messageSource.getMessage(
                 "bot.filter.info.currency-code-not-indicated",
                 null,
                 locale
         ) + ')');
         final var message = messageSource.getMessage(
                 "bot.create.input.min-price.formatted",
-                new Object[]{getMinPrice(pattern), currencyCode},
+                new Object[]{pattern.getMinPriceString(), currencyCode},
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
@@ -111,14 +111,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
     private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(OlxDefaultPattern pattern,
                                                                          Long chatId,
                                                                          Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, '(' + messageSource.getMessage(
+        final var currencyCode = pattern.getCurrencyCode('(' + messageSource.getMessage(
                 "bot.filter.info.currency-code-not-indicated",
                 null,
                 locale
         ) + ')');
         final var message = messageSource.getMessage(
                 "bot.create.input.max-price.formatted",
-                new Object[]{getMaxPrice(locale, pattern), currencyCode},
+                new Object[]{pattern.getMaxPriceString(messageSource, locale), currencyCode},
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
@@ -131,7 +131,7 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
     private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(OlxDefaultPattern pattern,
                                                                              Long chatId,
                                                                              Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, messageSource.getMessage(
+        final var currencyCode = pattern.getCurrencyCode(messageSource.getMessage(
                 "bot.filter.info.not-indicated",
                 null,
                 locale
@@ -157,7 +157,7 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                                                                           Locale locale) {
         final var message = messageSource.getMessage(
                 "bot.create.input.city-patterns.formatted",
-                new Object[]{getCity(locale, pattern)},
+                new Object[]{pattern.getCityNames(messageSource, locale)},
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
@@ -172,61 +172,13 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                                                                             Locale locale) {
         final var message = messageSource.getMessage(
                 "bot.create.input.region-patterns.formatted",
-                new Object[]{getRegion(locale, pattern)},
+                new Object[]{pattern.getRegionNames(messageSource, locale)},
                 locale);
         final var keyboard = new InlineKeyboardMarkup()
                 .addRow(getDefaultButtons(OlxDefaultPattern.Fields.regionNames, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
-    }
-
-
-    @NonNull
-    private String getRegion(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getRegionNames() == null || pattern.getRegionNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getRegionNames());
-    }
-
-    @NonNull
-    private String getCity(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getCityNames() == null || pattern.getCityNames().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getCityNames());
-    }
-
-    @NonNull
-    private String getPriceType(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getPriceType() == null
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : messageSource.getMessage(pattern.getPriceType().getMessageSource(), null, locale);
-    }
-
-    @NonNull
-    private String getDescriptionPatterns(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getDescriptionPatterns() == null || pattern.getDescriptionPatterns().length == 0
-                ? messageSource.getMessage("bot.filter.info.not-indicated", null, locale)
-                : Arrays.toString(pattern.getDescriptionPatterns());
-    }
-
-    @NonNull
-    private String getMaxPrice(Locale locale, OlxDefaultPattern pattern) {
-        return pattern.getMaxPrice() == null
-                ? messageSource.getMessage("bot.filter.info.max", null, locale)
-                : pattern.getMaxPrice().toString();
-    }
-
-    @NonNull
-    private Long getMinPrice(OlxDefaultPattern pattern) {
-        return pattern.getMinPrice() == null ? 0L : pattern.getMinPrice();
-    }
-
-    @NonNull
-    private String getCurrencyCode(OlxDefaultPattern pattern, String defaultMessage) {
-        return pattern.getCurrencyCode() == null
-                ? defaultMessage
-                : pattern.getCurrencyCode().name();
     }
 
     @NonNull
