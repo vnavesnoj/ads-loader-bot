@@ -20,8 +20,8 @@ import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern.Fields;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
-import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
+import vnavesnoj.ads_loader_bot_web.assistant.component.InputRequestCreator;
 import vnavesnoj.ads_loader_bot_web.assistant.component.PatternValueMapper;
 
 import java.util.Arrays;
@@ -41,6 +41,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
     private final ObjectMapper objectMapper;
 
     private final PatternValueMapper olxDefaultPatternValueMapper;
+    private final InputRequestCreator<OlxDefaultPattern> olxDefaultInputRequestCreator;
 
     private final OlxDefaultPattern DEFAULT_PATTERN = OlxDefaultPattern.builder()
             .priceType(PriceType.ALL)
@@ -82,18 +83,7 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                                                                      Long chatId,
                                                                      Locale locale) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
-        return switch (inputField) {
-            case OlxDefaultPattern.Fields.descriptionPatterns ->
-                    onChooseInputDescriptionPatterns(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(pattern, chatId, locale);
-            default ->
-                    throw new UnknownInputFieldException("unknown input field '" + inputField + "' for create input request");
-        };
+        return olxDefaultInputRequestCreator.createInputRequest(pattern, inputField, chatId, locale);
     }
 
     @Override
@@ -113,143 +103,6 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         final var mappedValue = olxDefaultPatternValueMapper.map(currentInput, input);
         filterBuilderService.updatePatternField(filterBuilder.getId(), currentInput, mappedValue);
         return input;
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern,
-                                                                                    Long chatId,
-                                                                                    Locale locale) {
-        final var message = messageSource.getMessage(
-                "bot.create.input.description-patterns.formatted",
-                new Object[]{getDescriptionPatterns(locale, pattern)},
-                locale
-        );
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(Fields.descriptionPatterns, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(OlxDefaultPattern pattern,
-                                                                          Long chatId,
-                                                                          Locale locale) {
-        final var message = messageSource.getMessage(
-                "bot.create.input.price-type.formatted",
-                new Object[]{getPriceType(locale, pattern)},
-                locale
-        );
-        final var freeTypeButton = new InlineKeyboardButton(
-                messageSource.getMessage(PriceType.FREE.getMessageSource(), null, locale)
-        ).callbackData(PriceType.FREE.name());
-        final var exchangeTypeButton = new InlineKeyboardButton(
-                messageSource.getMessage(PriceType.EXCHANGE.getMessageSource(), null, locale)
-        ).callbackData(PriceType.EXCHANGE.name());
-        final var paidTypeButton = new InlineKeyboardButton(
-                messageSource.getMessage(PriceType.PAID.getMessageSource(), null, locale)
-        ).callbackData(PriceType.PAID.name());
-        final var allTypeButton = new InlineKeyboardButton(
-                messageSource.getMessage(PriceType.ALL.getMessageSource(), null, locale)
-        ).callbackData(PriceType.ALL.name());
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(freeTypeButton, exchangeTypeButton, paidTypeButton)
-                .addRow(allTypeButton)
-                .addRow(getDefaultButtons(Fields.priceType, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(OlxDefaultPattern pattern,
-                                                                         Long chatId,
-                                                                         Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, '(' + messageSource.getMessage(
-                "bot.filter.info.currency-code-not-indicated",
-                null,
-                locale
-        ) + ')');
-        final var message = messageSource.getMessage(
-                "bot.create.input.min-price.formatted",
-                new Object[]{getMinPrice(pattern), currencyCode},
-                locale
-        );
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(Fields.minPrice, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(OlxDefaultPattern pattern,
-                                                                         Long chatId,
-                                                                         Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, '(' + messageSource.getMessage(
-                "bot.filter.info.currency-code-not-indicated",
-                null,
-                locale
-        ) + ')');
-        final var message = messageSource.getMessage(
-                "bot.create.input.max-price.formatted",
-                new Object[]{getMaxPrice(locale, pattern), currencyCode},
-                locale
-        );
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(Fields.maxPrice, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(OlxDefaultPattern pattern,
-                                                                             Long chatId,
-                                                                             Locale locale) {
-        final var currencyCode = getCurrencyCode(pattern, messageSource.getMessage(
-                "bot.filter.info.not-indicated",
-                null,
-                locale
-        ));
-        final var message = messageSource.getMessage(
-                "bot.create.input.choose-currency-code.formatted",
-                new Object[]{currencyCode},
-                locale
-        );
-        final var codeButtons = Arrays.stream(CurrencyCode.values())
-                .map(item -> new InlineKeyboardButton(item.name()).callbackData(item.name()))
-                .toArray(InlineKeyboardButton[]::new);
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(codeButtons)
-                .addRow(getDefaultButtons(Fields.currencyCode, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(OlxDefaultPattern pattern,
-                                                                          Long chatId,
-                                                                          Locale locale) {
-        final var message = messageSource.getMessage(
-                "bot.create.input.city-patterns.formatted",
-                new Object[]{getCity(locale, pattern)},
-                locale
-        );
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(Fields.cityNames, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
-    }
-
-    private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(OlxDefaultPattern pattern,
-                                                                            Long chatId,
-                                                                            Locale locale) {
-        final var message = messageSource.getMessage(
-                "bot.create.input.region-patterns.formatted",
-                new Object[]{getRegion(locale, pattern)},
-                locale);
-        final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(Fields.regionNames, locale));
-        return new SendMessage(chatId, message)
-                .replyMarkup(keyboard)
-                .parseMode(ParseMode.Markdown);
     }
 
     @NonNull
@@ -347,16 +200,5 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
         return pattern.getCurrencyCode() == null
                 ? defaultMessage
                 : pattern.getCurrencyCode().name();
-    }
-
-    @NonNull
-    private InlineKeyboardButton[] getDefaultButtons(String patternField, Locale locale) {
-        final var helpButton = new InlineKeyboardButton(
-                messageSource.getMessage("bot.button.help", null, locale)
-        ).callbackData("/help " + patternField);
-        final var backButton = new InlineKeyboardButton(
-                messageSource.getMessage("bot.button.back", null, locale)
-        ).callbackData("/builder");
-        return new InlineKeyboardButton[]{helpButton, backButton};
     }
 }
