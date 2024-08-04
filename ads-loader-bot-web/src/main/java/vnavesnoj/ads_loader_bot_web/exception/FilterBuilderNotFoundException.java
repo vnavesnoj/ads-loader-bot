@@ -8,6 +8,11 @@ import vnavesnoj.ads_loader_bot_common.annotation.BotResponseMessage;
  */
 @BotResponseMessage
 public class FilterBuilderNotFoundException extends RuntimeException {
+
+    public FilterBuilderNotFoundException() {
+        super();
+    }
+
     public FilterBuilderNotFoundException(String s) {
         super(s);
     }

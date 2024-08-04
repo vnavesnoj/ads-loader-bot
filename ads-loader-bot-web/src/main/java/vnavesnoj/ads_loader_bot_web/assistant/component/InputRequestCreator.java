@@ -12,5 +12,5 @@ import java.util.Locale;
  */
 public interface InputRequestCreator<T> {
 
-    BaseRequest<SendMessage, SendResponse> createInputRequest(T pattern, String inputField, Long chatId, Locale locale);
+    BaseRequest<SendMessage, SendResponse> createInputRequest(Long filterBuilderId, T pattern, String inputField, Long chatId, Locale locale);
 }

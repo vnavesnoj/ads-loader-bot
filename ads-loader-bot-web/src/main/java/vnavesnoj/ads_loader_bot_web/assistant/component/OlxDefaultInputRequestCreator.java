@@ -29,22 +29,23 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
     private final MessageSource messageSource;
 
     @Override
-    public BaseRequest<SendMessage, SendResponse> createInputRequest(OlxDefaultPattern pattern, String inputField, Long chatId, Locale locale) {
+    public BaseRequest<SendMessage, SendResponse> createInputRequest(Long id, OlxDefaultPattern pattern, String inputField, Long chatId, Locale locale) {
         return switch (inputField) {
             case OlxDefaultPattern.Fields.descriptionPatterns ->
-                    onChooseInputDescriptionPatterns(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(pattern, chatId, locale);
-            case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(pattern, chatId, locale);
+                    onChooseInputDescriptionPatterns(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.priceType -> onChooseInputPriceType(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.minPrice -> onChooseInputMinPrice(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.maxPrice -> onChooseInputMaxPrice(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.currencyCode -> onChooseInputCurrencyCode(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.cityNames -> onChooseInputCityNames(id, pattern, chatId, locale);
+            case OlxDefaultPattern.Fields.regionNames -> onChooseInputRegionNames(id, pattern, chatId, locale);
             default ->
                     throw new UnknownInputFieldException("unknown input field '" + inputField + "' for create input request");
         };
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputDescriptionPatterns(Long id,
+                                                                                    OlxDefaultPattern pattern,
                                                                                     Long chatId,
                                                                                     Locale locale) {
         final var message = messageSource.getMessage(
@@ -53,13 +54,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.descriptionPatterns, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.descriptionPatterns, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputPriceType(Long id,
+                                                                          OlxDefaultPattern pattern,
                                                                           Long chatId,
                                                                           Locale locale) {
         final var message = messageSource.getMessage(
@@ -82,13 +84,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
         final var keyboard = new InlineKeyboardMarkup()
                 .addRow(freeTypeButton, exchangeTypeButton, paidTypeButton)
                 .addRow(allTypeButton)
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.priceType, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.priceType, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputMinPrice(Long id,
+                                                                         OlxDefaultPattern pattern,
                                                                          Long chatId,
                                                                          Locale locale) {
         final var currencyCode = pattern.getCurrencyCode('(' + messageSource.getMessage(
@@ -102,13 +105,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.minPrice, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.minPrice, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputMaxPrice(Long id,
+                                                                         OlxDefaultPattern pattern,
                                                                          Long chatId,
                                                                          Locale locale) {
         final var currencyCode = pattern.getCurrencyCode('(' + messageSource.getMessage(
@@ -122,13 +126,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.maxPrice, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.maxPrice, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputCurrencyCode(Long id,
+                                                                             OlxDefaultPattern pattern,
                                                                              Long chatId,
                                                                              Locale locale) {
         final var currencyCode = pattern.getCurrencyCode(messageSource.getMessage(
@@ -146,13 +151,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 .toArray(InlineKeyboardButton[]::new);
         final var keyboard = new InlineKeyboardMarkup()
                 .addRow(codeButtons)
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.currencyCode, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.currencyCode, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputCityNames(Long id,
+                                                                          OlxDefaultPattern pattern,
                                                                           Long chatId,
                                                                           Locale locale) {
         final var message = messageSource.getMessage(
@@ -161,13 +167,14 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 locale
         );
         final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.cityNames, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.cityNames, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
-    private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(OlxDefaultPattern pattern,
+    private BaseRequest<SendMessage, SendResponse> onChooseInputRegionNames(Long id,
+                                                                            OlxDefaultPattern pattern,
                                                                             Long chatId,
                                                                             Locale locale) {
         final var message = messageSource.getMessage(
@@ -175,20 +182,23 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 new Object[]{pattern.getRegionNames(messageSource, locale)},
                 locale);
         final var keyboard = new InlineKeyboardMarkup()
-                .addRow(getDefaultButtons(OlxDefaultPattern.Fields.regionNames, locale));
+                .addRow(getDefaultButtons(id, OlxDefaultPattern.Fields.regionNames, locale));
         return new SendMessage(chatId, message)
                 .replyMarkup(keyboard)
                 .parseMode(ParseMode.Markdown);
     }
 
     @NonNull
-    private InlineKeyboardButton[] getDefaultButtons(String patternField, Locale locale) {
+    private InlineKeyboardButton[] getDefaultButtons(Long id, String patternField, Locale locale) {
+        final var resetButton = new InlineKeyboardButton(
+                messageSource.getMessage("bot.button.reset", null, locale)
+        ).callbackData("/reset-input %s %s".formatted(id, patternField));
         final var helpButton = new InlineKeyboardButton(
                 messageSource.getMessage("bot.button.help", null, locale)
         ).callbackData("/help " + patternField);
         final var backButton = new InlineKeyboardButton(
                 messageSource.getMessage("bot.button.back", null, locale)
         ).callbackData("/builder");
-        return new InlineKeyboardButton[]{helpButton, backButton};
+        return new InlineKeyboardButton[]{resetButton, helpButton, backButton};
     }
 }

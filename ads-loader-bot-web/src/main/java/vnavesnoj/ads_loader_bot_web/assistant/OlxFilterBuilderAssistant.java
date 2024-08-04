@@ -15,10 +15,12 @@ import vnavesnoj.ads_loader_bot_common.constant.PriceType;
 import vnavesnoj.ads_loader_bot_common.pojo.OlxDefaultPattern;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderCreateDto;
 import vnavesnoj.ads_loader_bot_service.dto.filterbuilder.FilterBuilderReadDto;
+import vnavesnoj.ads_loader_bot_service.exception.UnknownInputFieldException;
 import vnavesnoj.ads_loader_bot_service.service.FilterBuilderService;
 import vnavesnoj.ads_loader_bot_web.assistant.component.FilterBuilderInfoProducer;
 import vnavesnoj.ads_loader_bot_web.assistant.component.InputRequestCreator;
 import vnavesnoj.ads_loader_bot_web.assistant.component.PatternValueMapper;
+import vnavesnoj.ads_loader_bot_web.exception.FilterBuilderNotFoundException;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -44,6 +46,8 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
             .minPrice(0L)
             .currencyCode(CurrencyCode.UAH)
             .build();
+
+    private final Class<? extends OlxDefaultPattern> DEFAULT_PATTERN_CLASS = DEFAULT_PATTERN.getClass();
 
     private final AnalyzerEnum analyzer = AnalyzerEnum.OLX_UA_DEFAULT;
 
@@ -79,12 +83,26 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                                                                      Long chatId,
                                                                      Locale locale) {
         final OlxDefaultPattern pattern = objectMapper.readValue(filterBuilder.getPattern(), OlxDefaultPattern.class);
-        return olxDefaultInputRequestCreator.createInputRequest(pattern, inputField, chatId, locale);
+        return olxDefaultInputRequestCreator.createInputRequest(filterBuilder.getId(), pattern, inputField, chatId, locale);
     }
 
+    @SneakyThrows
     @Override
-    public BaseRequest<SendMessage, SendResponse> resetInput(FilterBuilderReadDto filterBuilder, String inputField) {
-        return null;
+    public String resetInput(FilterBuilderReadDto filterBuilder, String inputField) {
+        try {
+            final var field = DEFAULT_PATTERN_CLASS.getDeclaredField(inputField);
+            try {
+                field.setAccessible(true);
+                final var defaultValue = field.get(DEFAULT_PATTERN);
+                filterBuilderService.updatePatternField(filterBuilder.getId(), inputField, defaultValue)
+                        .orElseThrow(FilterBuilderNotFoundException::new);
+                return defaultValue != null ? defaultValue.toString() : "";
+            } finally {
+                field.setAccessible(false);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new UnknownInputFieldException("field '%s' not exists in %s".formatted(inputField, DEFAULT_PATTERN_CLASS.getName()));
+        }
     }
 
     @Override

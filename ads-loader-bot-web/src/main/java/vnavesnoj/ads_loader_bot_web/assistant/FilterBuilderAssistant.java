@@ -19,7 +19,7 @@ public interface FilterBuilderAssistant extends Assistant {
 
     BaseRequest<SendMessage, SendResponse> createInputRequest(FilterBuilderReadDto filterBuilder, String inputField, Long chatId, Locale locale);
 
-    BaseRequest<SendMessage, SendResponse> resetInput(FilterBuilderReadDto filterBuilder, String inputField);
+    String resetInput(FilterBuilderReadDto filterBuilder, String inputField);
 
     String handleInputRequest(FilterBuilderReadDto filterBuilder, String input);
 }
