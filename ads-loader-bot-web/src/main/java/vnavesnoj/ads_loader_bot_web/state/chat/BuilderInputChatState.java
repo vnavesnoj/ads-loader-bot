@@ -52,6 +52,7 @@ public class BuilderInputChatState extends BaseChatState {
         return onBuilder(user, chat);
     }
 
+    //TODO remove to BaseChatState
     @Override
     public BaseRequest<SendMessage, SendResponse> onChooseResetInput(User user, Chat chat, Long filterBuilderId, String input) {
         filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
@@ -83,5 +84,10 @@ public class OlxFilterBuilderAssistant implements FilterBuilderAssistant {
                     + FilterBuilderReadDto.Fields.currentInput);
         }
         return olxDefaultFilterBuilderManager.updateField(filterBuilder.getId(), currentInput, input);
+    }
+
+    @Override
+    public String handleInputRequest(FilterBuilderReadDto filterBuilder, @NonNull String field, String value) {
+        return olxDefaultFilterBuilderManager.updateField(filterBuilder.getId(), field, value);
     }
 }

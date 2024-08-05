@@ -71,16 +71,16 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
         );
         final var freeTypeButton = new InlineKeyboardButton(
                 messageSource.getMessage(PriceType.FREE.getMessageSource(), null, locale)
-        ).callbackData(PriceType.FREE.name());
+        ).callbackData("/input-value %s %s %s".formatted(id, OlxDefaultPattern.Fields.priceType, PriceType.FREE.name()));
         final var exchangeTypeButton = new InlineKeyboardButton(
                 messageSource.getMessage(PriceType.EXCHANGE.getMessageSource(), null, locale)
-        ).callbackData(PriceType.EXCHANGE.name());
+        ).callbackData("/input-value %s %s %s".formatted(id, OlxDefaultPattern.Fields.priceType, PriceType.EXCHANGE.name()));
         final var paidTypeButton = new InlineKeyboardButton(
                 messageSource.getMessage(PriceType.PAID.getMessageSource(), null, locale)
-        ).callbackData(PriceType.PAID.name());
+        ).callbackData("/input-value %s %s %s".formatted(id, OlxDefaultPattern.Fields.priceType, PriceType.PAID.name()));
         final var allTypeButton = new InlineKeyboardButton(
                 messageSource.getMessage(PriceType.ALL.getMessageSource(), null, locale)
-        ).callbackData(PriceType.ALL.name());
+        ).callbackData("/input-value %s %s %s".formatted(id, OlxDefaultPattern.Fields.priceType, PriceType.ALL.name()));
         final var keyboard = new InlineKeyboardMarkup()
                 .addRow(freeTypeButton, exchangeTypeButton, paidTypeButton)
                 .addRow(allTypeButton)
@@ -147,7 +147,11 @@ public class OlxDefaultInputRequestCreator implements InputRequestCreator<OlxDef
                 locale
         );
         final var codeButtons = Arrays.stream(CurrencyCode.values())
-                .map(item -> new InlineKeyboardButton(item.name()).callbackData(item.name()))
+                .map(item -> new InlineKeyboardButton(item.name())
+                        .callbackData(
+                                "/input-value %s %s %s".formatted(id, OlxDefaultPattern.Fields.currencyCode, item.name())
+                        )
+                )
                 .toArray(InlineKeyboardButton[]::new);
         final var keyboard = new InlineKeyboardMarkup()
                 .addRow(codeButtons)

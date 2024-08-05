@@ -185,4 +185,17 @@ public class TelegramFilterManagerBot implements TelegramMvcController {
                 chatState -> chatState.onInput(user, chat, input)
         );
     }
+
+    @BotRequest(value = "/input-value {fbId:[\\d]+} {field:[\\S]+} {value:[\\s\\S]+}", type = {MessageType.MESSAGE, MessageType.CALLBACK_QUERY})
+    public BaseRequest<SendMessage, SendResponse> onInputValue(User user,
+                                                               Chat chat,
+                                                               @BotPathVariable("fbId") Long fbId,
+                                                               @BotPathVariable("field") String field,
+                                                               @BotPathVariable("value") String value) {
+        return botRequestHandler.handleRequest(
+                user,
+                chat,
+                chatState -> chatState.onInputValue(user, chat, fbId, field, value)
+        );
+    }
 }

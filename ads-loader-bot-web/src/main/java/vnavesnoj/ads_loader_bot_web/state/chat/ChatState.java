@@ -32,5 +32,7 @@ public interface ChatState {
 
     BaseRequest<SendMessage, SendResponse> onInput(User user, Chat chat, String input);
 
+    BaseRequest<SendMessage, SendResponse> onInputValue(User user, Chat chat, Long filterBuilderId, String patternField, String value);
+
     ChatStateEnum getName();
 }

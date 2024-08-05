@@ -191,6 +191,17 @@ public abstract class BaseChatState implements ChatState {
         throw new InvalidChatStateMethod("method 'onInput' not supported by " + this.getClass().getName());
     }
 
+    @Override
+    public BaseRequest<SendMessage, SendResponse> onInputValue(User user, Chat chat, Long filterBuilderId, String patternField, String value) {
+        filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())
+                .map(item -> filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
+                        .handleInputRequest(item, patternField, value))
+                .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with id = " + filterBuilderId
+                        + " and FilterBuilder.user.id = " + user.id()
+                        + " does not exist"));
+        return onBuilder(user, chat);
+    }
+
     private SendMessage writeFilterBuilderExists(Chat chat, Locale locale) {
         final var message = messageSource.getMessage("bot.create.filter-builder-already-exists", null, locale);
         final var keyboard = new InlineKeyboardMarkup()

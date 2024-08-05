@@ -22,4 +22,6 @@ public interface FilterBuilderAssistant extends Assistant {
     String resetInput(FilterBuilderReadDto filterBuilder, String inputField);
 
     String handleInputRequest(FilterBuilderReadDto filterBuilder, String input);
+
+    String handleInputRequest(FilterBuilderReadDto filterBuilder, String field, String value);
 }
