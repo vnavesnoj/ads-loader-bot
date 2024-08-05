@@ -183,7 +183,13 @@ public abstract class BaseChatState implements ChatState {
                                                                      Chat chat,
                                                                      Long filterBuilderId,
                                                                      String input) {
-        throw new InvalidChatStateMethod("method 'onChooseResetInput' not supported by " + this.getClass().getName());
+        filterBuilderService.findByIdAndUserId(filterBuilderId, user.id())
+                .map(item -> filterBuilderAssistantFactory.getAssistant(item.getSpot().getAnalyzer())
+                        .resetInput(item, input))
+                .orElseThrow(() -> new FilterBuilderNotFoundException("FilterBuilder with id = " + filterBuilderId
+                        + " and FilterBuilder.user.id = " + user.id()
+                        + " does not exist"));
+        return onBuilder(user, chat);
     }
 
     @Override
